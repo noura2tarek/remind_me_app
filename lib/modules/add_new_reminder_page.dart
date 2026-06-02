@@ -198,16 +198,18 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                                 selectedTime!.minute,
                               );
                               // not  worked !!?
-                              // with this: I/le.reminder_ap(10641): oneway function results will be dropped 
+                              // with this: I/le.reminder_ap(10641): oneway function results will be dropped
                               // but finished with status UNKNOWN_TRANSACTION and parcel size 0
                               await NotificationsService()
                                   .sendScheduledNotification(
                                     title: titleController.text,
                                     body: descriptionController.text,
                                     scheduledDate: scheduledDate,
-                                    id: 1,
+                                    id:
+                                        DateTime.now().millisecondsSinceEpoch ~/
+                                        1000,
                                   );
-                              // immediate notification worked 
+                              // immediate notification worked
                               // await NotificationsService().sendImmediateNotification(
                               //   title: titleController.text,
                               //   body: descriptionController.text,
