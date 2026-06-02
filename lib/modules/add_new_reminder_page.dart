@@ -190,7 +190,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                             onPressed: () async {
                               Navigator.pop(context);
                               // send scheduled notification to user
-
                               final scheduledDate = DateTime(
                                 selectedDate!.year,
                                 selectedDate!.month,
@@ -198,6 +197,9 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                                 selectedTime!.hour,
                                 selectedTime!.minute,
                               );
+                              // not  worked !!?
+                              // with this: I/le.reminder_ap(10641): oneway function results will be dropped 
+                              // but finished with status UNKNOWN_TRANSACTION and parcel size 0
                               await NotificationsService()
                                   .sendScheduledNotification(
                                     title: titleController.text,
@@ -205,6 +207,13 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                                     scheduledDate: scheduledDate,
                                     id: 1,
                                   );
+                              // immediate notification worked 
+                              // await NotificationsService().sendImmediateNotification(
+                              //   title: titleController.text,
+                              //   body: descriptionController.text,
+
+                              //   id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                              // );
                               debugPrint(
                                 'notification scheduled done for: $scheduledDate',
                               );
