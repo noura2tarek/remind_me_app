@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reminder_app/services/notifications_service.dart';
 
-// import 'package:flutter/in.dart';
 class AddNewReminderPage extends StatefulWidget {
   const AddNewReminderPage({super.key});
 
@@ -179,7 +178,9 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                           children: [
                             // text1
                             Text('title of reminder: ${titleController.text}'),
+                            // text2
                             Text('Description: ${descriptionController.text}'),
+                            // date and time
                             Text(
                               'date and time: ${dateController.text} ${timeController.text}',
                             ),
