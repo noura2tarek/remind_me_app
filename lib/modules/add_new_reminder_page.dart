@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:reminder_app/modules/widgets/repaet_container.dart';
 import 'package:reminder_app/services/notifications_service.dart';
+
+List<String> repeatOptions = ['Daily', 'Weekly', 'Monthly'];
 
 class AddNewReminderPage extends StatefulWidget {
   const AddNewReminderPage({super.key});
@@ -18,6 +21,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   DateFormat dateFormat = DateFormat('yMMMMEEEEd');
   TimeOfDay? selectedTime;
   DateTime? selectedDate;
+  String? selectedRepeatOption;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +42,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Add your title and description of your reminder
               // title text field
@@ -103,11 +108,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                     if (value != null) {
                       dateController.text = dateFormat.format(value);
                       selectedDate = value; // save value of date
-                      // check if date in future
-                      // if(selectedDate != DateTime.now()){
-                      //   debugPrint('selected date: $selectedDate');
-                      //  debugPrint('current date: ${DateTime.now()}');
-                      // }
+
                       if (selectedDate!.day != DateTime.now().day &&
                           selectedDate!.isBefore(DateTime.now())) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -151,9 +152,45 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                   });
                 },
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Text(
+                  'Repeat reminder',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
 
-              // Add save button
-              const SizedBox(height: 50),
+              // make a row of daily , weekly and monthly reminder buttons
+              SizedBox(
+                height: 40,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: repeatOptions.length,
+                  itemBuilder: (context, index) => RepeatContainer(
+                    text: repeatOptions[index],
+                    isSelected: selectedRepeatOption == repeatOptions[index],
+                    onTap: () {
+                      setState(() {
+                        if (selectedRepeatOption == repeatOptions[index]) {
+                          selectedRepeatOption =
+                              null; // unselect if already selected
+                        } else {
+                          selectedRepeatOption = repeatOptions[index];
+                        }
+                      });
+                    },
+                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
+                ),
+              ), // Add save button
+              const SizedBox(height: 20),
+              //------ Save / verify button
               ElevatedButton(
                 onPressed: () {
                   // validate if date and time is selected
@@ -161,6 +198,23 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please select date and time'),
+                      ),
+                    );
+                    return;
+                  }
+                  final scheduledDate = DateTime(
+                    selectedDate!.year,
+                    selectedDate!.month,
+                    selectedDate!.day,
+                    selectedTime!.hour,
+                    selectedTime!.minute,
+                  );
+                  if (scheduledDate.isBefore(DateTime.now())) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Please select date and time in the future',
+                        ),
                       ),
                     );
                     return;
@@ -184,43 +238,18 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                             Text(
                               'date and time: ${dateController.text} ${timeController.text}',
                             ),
+                            // repeat option
+                            Text(
+                              'repeat option: ${selectedRepeatOption ?? 'Not selected'}',
+                            ),
                           ],
                         ),
                         actions: [
                           TextButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              // send scheduled notification to user
-                              final scheduledDate = DateTime(
-                                selectedDate!.year,
-                                selectedDate!.month,
-                                selectedDate!.day,
-                                selectedTime!.hour,
-                                selectedTime!.minute,
-                              );
-                              // not  worked !!?
-                              // with this: I/le.reminder_ap(10641): oneway function results will be dropped
-                              // but finished with status UNKNOWN_TRANSACTION and parcel size 0
-                              await NotificationsService()
-                                  .sendScheduledNotification(
-                                    title: titleController.text,
-                                    body: descriptionController.text,
-                                    scheduledDate: scheduledDate,
-                                    id:
-                                        DateTime.now().millisecondsSinceEpoch ~/
-                                        1000,
-                                  );
-                              // immediate notification worked
-                              // await NotificationsService().sendImmediateNotification(
-                              //   title: titleController.text,
-                              //   body: descriptionController.text,
-
-                              //   id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-                              // );
-                              debugPrint(
-                                'notification scheduled done for: $scheduledDate',
-                              );
-                            },
+                            onPressed: () => _verifyReminder(
+                              scheduledDate,
+                              selectedRepeatOption: selectedRepeatOption,
+                            ),
                             child: Text('Verify'),
                           ),
                         ],
@@ -255,6 +284,66 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
     );
   }
 
+  //------------------------------------------
+  // Verify reminder function and schedule notification
+  void _verifyReminder(
+    final DateTime scheduledDate, {
+    String? selectedRepeatOption,
+  }) async {
+    Navigator.pop(context);
+    // send scheduled notification to user
+    // but finished with status UNKNOWN_TRANSACTION and parcel size 0
+    debugPrint('repeat option selected: $selectedRepeatOption');
+    if (selectedRepeatOption != null) {
+      if (selectedRepeatOption == repeatOptions[0]) {
+        final timeOfDay = TimeOfDay(
+          hour: scheduledDate.hour,
+          minute: scheduledDate.minute,
+        );
+        await NotificationsService().sendDailyNotification(
+          title: titleController.text,
+          body: descriptionController.text,
+          time: timeOfDay,
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        );
+      } else if (selectedRepeatOption == repeatOptions[1]) {
+        selectedRepeatOption = 'weekly';
+        await NotificationsService().sendWeeklyNotification(
+          title: titleController.text,
+          body: descriptionController.text,
+          dateTime: scheduledDate,
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        );
+      } else if (selectedRepeatOption == repeatOptions[2]) {
+        selectedRepeatOption = 'monthly';
+        await NotificationsService().sendMonthlyNotification(
+          title: titleController.text,
+          body: descriptionController.text,
+          dateTime: scheduledDate,
+          id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        );
+      }
+    } else {
+      // normal schedule without repeat
+      await NotificationsService().sendScheduledNotification(
+        title: titleController.text,
+        body: descriptionController.text,
+        scheduledDate: scheduledDate,
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      );
+    }
+
+    // check after schedule
+    NotificationsService().getPendingNotifications();
+    debugPrint('notification scheduled done for: $scheduledDate');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Reminder scheduled successfully'),
+      ),
+    );
+  }
+
   @override
   dispose() {
     titleController.dispose();
@@ -266,3 +355,4 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
     super.dispose();
   }
 }
+

@@ -65,6 +65,7 @@ class NotificationsService {
           importance: Importance.max,
           priority: Priority.high,
           color: Colors.purple,
+          visibility: NotificationVisibility.public,
         );
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -96,6 +97,9 @@ class NotificationsService {
           importance: Importance.max,
           priority: Priority.high,
           color: Colors.purple,
+          visibility: NotificationVisibility.public,
+          category: AndroidNotificationCategory.alarm,
+          fullScreenIntent: true,
         );
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -126,6 +130,16 @@ class NotificationsService {
     await _flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  // Get Pending notifications/ reminders
+  void getPendingNotifications() async {
+    final List<PendingNotificationRequest> pending =
+        await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
+
+    for (final item in pending) {
+      debugPrint('ID: ${item.id}, Title: ${item.title}');
+    }
+  }
+
   // Daily notification at specific time
   Future<void> sendDailyNotification({
     required String title,
@@ -141,6 +155,9 @@ class NotificationsService {
           importance: Importance.max,
           priority: Priority.high,
           color: Colors.purple,
+          visibility: NotificationVisibility.public,
+          category: AndroidNotificationCategory.alarm,
+          // fullScreenIntent: true,
         );
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
