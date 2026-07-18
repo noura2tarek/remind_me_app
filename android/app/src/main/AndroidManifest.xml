@@ -5,7 +5,7 @@
 
 
     <application
-        android:label="Remind Me"
+        android:label="ذكّرني"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         >

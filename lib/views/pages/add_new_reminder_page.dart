@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:reminder_app/modules/widgets/repaet_container.dart';
 import 'package:reminder_app/services/notifications_service.dart';
-
-List<String> repeatOptions = ['Daily', 'Weekly', 'Monthly'];
+import 'package:reminder_app/views/widgets/repeat_options_list.dart';
 
 class AddNewReminderPage extends StatefulWidget {
   const AddNewReminderPage({super.key});
@@ -21,7 +19,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   DateFormat dateFormat = DateFormat('yMMMMEEEEd');
   TimeOfDay? selectedTime;
   DateTime? selectedDate;
-  String? selectedRepeatOption;
+  // String? selectedRepeatOption;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,14 +27,26 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Add New Reminder',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
+        actions: [
+          IconButton(onPressed: () {
+            // pin note
+            // save with parameter pinned boolean optional
+          }, icon: Icon(Icons.push_pin_outlined)),
+          IconButton(
+            onPressed: () {
+              // detect a remminder for this note 
+            },
+            icon: Icon(Icons.notifications_none_outlined),
           ),
-        ),
+        ],
+        // title: const Text(
+        //   'Add New Reminder',
+        //   style: TextStyle(
+        //     fontSize: 18,
+        //     fontWeight: FontWeight.w500,
+        //     color: Colors.black87,
+        //   ),
+        // ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -152,44 +162,9 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                   });
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Text(
-                  'Repeat reminder',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
 
-              // make a row of daily , weekly and monthly reminder buttons
-              SizedBox(
-                height: 40,
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: repeatOptions.length,
-                  itemBuilder: (context, index) => RepeatContainer(
-                    text: repeatOptions[index],
-                    isSelected: selectedRepeatOption == repeatOptions[index],
-                    onTap: () {
-                      setState(() {
-                        if (selectedRepeatOption == repeatOptions[index]) {
-                          selectedRepeatOption =
-                              null; // unselect if already selected
-                        } else {
-                          selectedRepeatOption = repeatOptions[index];
-                        }
-                      });
-                    },
-                  ),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
-                ),
-              ), // Add save button
-              const SizedBox(height: 20),
+              // Add save button
+
               //------ Save / verify button
               ElevatedButton(
                 onPressed: () {
@@ -238,17 +213,13 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                             Text(
                               'date and time: ${dateController.text} ${timeController.text}',
                             ),
-                            // repeat option
-                            Text(
-                              'repeat option: ${selectedRepeatOption ?? 'Not selected'}',
-                            ),
                           ],
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => _verifyReminder(
                               scheduledDate,
-                              selectedRepeatOption: selectedRepeatOption,
+                              // selectedRepeatOption: selectedRepeatOption,
                             ),
                             child: Text('Verify'),
                           ),
@@ -355,4 +326,3 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
     super.dispose();
   }
 }
-
