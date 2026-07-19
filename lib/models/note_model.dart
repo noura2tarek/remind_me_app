@@ -10,15 +10,21 @@ class NoteModel extends HiveObject {
   @HiveField(2)
   final String date;
   @HiveField(3)
-  int color;
+  int? color;
   @HiveField(4)
-  int colorBorderDate;
+  int? colorBorderDate;
+  @HiveField(5)
+  bool? isPinned;
+  @HiveField(6)
+  final int id;
 
   NoteModel({
     required this.title,
+    required this.id,
     this.content,
     required this.date,
-    required this.color,
-    required this.colorBorderDate,
+    this.color,
+    this.isPinned = false,
+    this.colorBorderDate,
   });
 }

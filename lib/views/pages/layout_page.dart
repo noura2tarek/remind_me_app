@@ -1,6 +1,8 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/utils/constants.dart';
+import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
 import 'package:reminder_app/views/pages/add_new_reminder_page.dart';
 import 'package:reminder_app/views/pages/home_page.dart';
 import 'package:reminder_app/views/pages/search_page.dart';
@@ -23,11 +25,16 @@ class _LayoutPageState extends State<LayoutPage> {
       extendBody: true,
       body: pages[_bottomNavIndex], //destination screen
       floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
         onPressed: () {
           // Navigate to add new reminder page
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AddNewReminderPage()),
+            MaterialPageRoute(
+              builder: (context) =>  BlocProvider(
+                create: (context) => AddNoteCubit(),
+                child: const AddNewReminderPage(),
+              ),
+            ),
           );
         },
         backgroundColor: Colors.white,
@@ -46,8 +53,8 @@ class _LayoutPageState extends State<LayoutPage> {
         activeIndex: _bottomNavIndex,
         gapLocation: GapLocation.center,
         notchSmoothness: NotchSmoothness.sharpEdge,
-        leftCornerRadius: 32,
-        rightCornerRadius: 32,
+        leftCornerRadius: 28,
+        rightCornerRadius: 28,
         onTap: (index) => setState(() => _bottomNavIndex = index),
         //other params
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reminder_app/models/note_model.dart';
 
+//Color(0xff7dccff)
 class CardItem extends StatelessWidget {
   const CardItem({super.key, required this.note});
   final NoteModel note;
@@ -10,7 +11,7 @@ class CardItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 15),
       width: MediaQuery.of(context).size.width * 0.56,
       decoration: BoxDecoration(
-        color: Color(0xff7dccff),
+        color: Color(note.color ?? 0xff000000),
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -34,7 +35,9 @@ class CardItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              border: Border.all(color: Color(note.colorBorderDate)),
+              border: Border.all(
+                color: Color(note.colorBorderDate ?? 0xffffffff),
+              ),
               borderRadius: BorderRadius.all(Radius.circular(5)),
             ),
             child: Text(

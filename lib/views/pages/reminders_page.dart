@@ -10,18 +10,21 @@ List<NoteModel> dummyUpcoimgNotes = [
     date: 'Tommorow, 11:04',
     color: 0xffFDA6C4,
     colorBorderDate: 0xffD98CA8,
+    id: 0,
   ),
   NoteModel(
     title: 'Birthday Party Prepararion',
     date: 'Sat, 6:00',
     color: 0xff1ECDC4,
     colorBorderDate: 0xff1BBDB9,
+    id: 1,
   ),
   NoteModel(
     title: 'Buy tickets for the family vacation',
     date: '4 Sep, 3:00',
     color: 0xff1ECDC4,
     colorBorderDate: 0xff1BBDB9,
+    id: 2,
   ),
   NoteModel(
     title: 'Appointment',
@@ -29,46 +32,68 @@ List<NoteModel> dummyUpcoimgNotes = [
     date: '5 Sep, 5:00',
     color: 0xffFDA6C4,
     colorBorderDate: 0xffD98CA8,
+    id: 3,
   ),
 ];
 
 class RemindersPage extends StatelessWidget {
-  const RemindersPage({super.key});
+  const RemindersPage({super.key, required this.notes});
+  final List<NoteModel> notes;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Pinned', style: TextStyle(fontSize: 16, color: Colors.grey)),
-        SizedBox(height: 8),
-        // list view horizontal of pinned notes
-        SizedBox(
-          height: 150,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return CardItem(
-                note: NoteModel(
-                  title: 'Coffee',
-                  content: 'Prepare hot coffee for friends.',
-                  color: 0xff7dccff,
-                  date: 'Today, 4:30',
-                  colorBorderDate: 0xff4392C6,
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return SizedBox(width: 10);
-            },
-            itemCount: 3,
+    List<NoteModel> pinnedNotes = notes
+        .where((note) => note.isPinned == true)
+        .toList();
+    return CustomScrollView(
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      slivers: [
+        const SliverToBoxAdapter(
+          child: Text(
+            'Pinned',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ),
-        SizedBox(height: 20),
-        Text('Upcoming', style: TextStyle(fontSize: 16, color: Colors.grey)),
-        SizedBox(height: 8),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
+        // list view horizontal of pinned notes
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: 150,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                /*
+                 NoteModel(
+                    id: index,
+                    title: 'Coffee',
+                    content: 'Prepare hot coffee for friends.',
+                    color: 0xff7dccff,
+                    date: 'Today, 4:30',
+                    colorBorderDate: 0xff4392C6,
+                  )
+                */
+                return CardItem(
+                  note: pinnedNotes[index],
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(width: 10);
+              },
+              itemCount: pinnedNotes.length,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        const SliverToBoxAdapter(
+          child: Text(
+            'Upcoming',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
         // Staggered grid view
-        Expanded(child: UpcomingRemindersList(notes: dummyUpcoimgNotes)),
+        UpcomingRemindersList(notes: notes),
+        const SliverToBoxAdapter(child: SizedBox(height: 30)),
       ],
     );
   }
@@ -80,21 +105,22 @@ class UpcomingRemindersList extends StatelessWidget {
   final List<NoteModel> notes;
   @override
   Widget build(BuildContext context) {
-    return MasonryGridView.builder(
-      scrollDirection: Axis.vertical,
-      padding: EdgeInsets.all(0),
-      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
+    return SliverMasonryGrid.count(
+      //scrollDirection: Axis.vertical,
+      //padding: EdgeInsets.all(0),
+      crossAxisCount: 2,
+      // gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+      //   crossAxisCount: 2,
+      // ),
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
-      itemCount: notes.length,
+      childCount: notes.length,
       itemBuilder: (context, index) {
         final note = notes[index];
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Color(note.color),
+            color: Color(note.color ?? 0xff000000),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -112,7 +138,7 @@ class UpcomingRemindersList extends StatelessWidget {
               if (note.content != null)
                 Text(
                   note.content ?? "",
-                  style: TextStyle(color: Colors.black54),
+                  style: const TextStyle(color: Colors.black54),
                 ),
               const SizedBox(height: 20),
 
@@ -122,7 +148,9 @@ class UpcomingRemindersList extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(note.colorBorderDate)),
+                  border: Border.all(
+                    color: Color(note.colorBorderDate ?? 0xffffffff),
+                  ),
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Text(note.date),

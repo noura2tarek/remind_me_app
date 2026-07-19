@@ -18,3 +18,9 @@ class AddNoteError extends AddNoteState{
 }
 
 class NoteChangeColor extends AddNoteState{}
+
+class ReminderChanged extends AddNoteState{}
+
+class DateChanged extends AddNoteState{}
+
+class TimeChanged extends AddNoteState{}
