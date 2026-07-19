@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/widgets/repaet_container.dart';
-
-List<String> repeatOptions = ['Daily', 'Weekly', 'Monthly'];
 
 class RepeatOptionsList extends StatefulWidget {
   const RepeatOptionsList({super.key});
@@ -17,8 +16,8 @@ class _RepeatOptionsListState extends State<RepeatOptionsList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.0),
           child: Text(
             'Repeat reminder',
             style: TextStyle(

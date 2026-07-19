@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/pages/no_reminders_page.dart';
-import 'package:reminder_app/views/pages/reminders_page.dart';
+import 'package:reminder_app/views/pages/home/no_reminders_page.dart';
+import 'package:reminder_app/views/pages/home/reminders_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

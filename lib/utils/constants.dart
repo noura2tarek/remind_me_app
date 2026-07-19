@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
 String kRemindersBox = 'notes_reminders_box';
+const List<String> repeatOptions = [
+  'Does not repeat',
+  'Daily',
+  'Weekly',
+  'Monthly',
+  'Yearly',
+];
 
 // colors
 const kPrimaryColor = Color(0xFFFFA348);

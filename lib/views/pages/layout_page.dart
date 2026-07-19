@@ -5,7 +5,7 @@ import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/pages/add_new_reminder_page.dart';
-import 'package:reminder_app/views/pages/home_page.dart';
+import 'package:reminder_app/views/pages/home/home_page.dart';
 import 'package:reminder_app/views/pages/search_page.dart';
 
 class LayoutPage extends StatefulWidget {

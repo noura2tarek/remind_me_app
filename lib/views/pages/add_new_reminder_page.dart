@@ -17,13 +17,24 @@ class AddNewReminderPage extends StatefulWidget {
 
 class _AddNewReminderPageState extends State<AddNewReminderPage> {
   // intitialze controllers
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
-  //DateFormat dateFormat = DateFormat('dd/mm/yyyy');
-  DateFormat dateFormat = DateFormat('d MMM, h:mm a');
+  late TextEditingController titleController;
+  late TextEditingController contentController;
+  late TextEditingController dateController;
+  late TextEditingController timeController;
+  late TextEditingController repeatController;
+  DateFormat dateFormat = DateFormat('d MMM');
+  // DateFormat dateFormat = DateFormat('d MMM, h:mm a');
   bool isPinned = false;
+  @override
+  void initState() {
+    titleController = TextEditingController();
+    contentController = TextEditingController();
+    dateController = TextEditingController();
+    dateController.text = dateFormat.format(DateTime.now());
+    timeController = TextEditingController();
+    repeatController = TextEditingController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,12 +177,12 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                   if (hasReminder == true)
                     Row(
                       children: [
-                        const Icon(Icons.done_all, color: Colors.green),
+                        const Icon(Icons.done_all, color: Colors.blue),
                         const SizedBox(width: 7),
                         TextButton(
                           onPressed: () async {
-                            // show dialog
-                            //  await showEditDialogF();
+                            // show edit dialog
+                            await showDialogF(isEditingReminder: true);
                           },
                           child: Text(
                             formatReminder(reminderDate ?? DateTime.now()),
@@ -193,18 +204,21 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   }
 
   // Show remind dialog
-  Future<bool> showDialogF() async {
+  Future<bool> showDialogF({bool isEditingReminder = false}) async {
+    DateTime? selectedDate = DateTime.now();
+    TimeOfDay? selectedTime;
+    String? selectedRepeatOption;
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        DateTime? selectedDate;
-        TimeOfDay? selectedTime;
         return BlocProvider.value(
           value: AddNoteCubit.get(context),
           child: CustomAlertDialog(
+            isEditingReminder: isEditingReminder,
             onCancelF: () => Navigator.pop(dialogContext, false),
             dateController: dateController,
             timeController: timeController,
+            repeatController: repeatController,
             onSelectTime: () {
               // TimeOfDay? selectedTime = AddNoteCubit.get(context).selectedTime;
               showTimePicker(
@@ -228,7 +242,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               ).then((value) {
                 if (value != null) {
                   dateController.text = dateFormat.format(value);
-                  selectedDate = value; // save value of date
+                 selectedDate = value; // save value of date
                   // AddNoteCubit.get(context).setDate(date: value);
                   if (selectedDate!.day != DateTime.now().day &&
                       selectedDate!.isBefore(DateTime.now())) {
@@ -244,9 +258,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               });
             },
             saveReminderF: () {
-              //  final cubit = AddNoteCubit.get(context);
-              //  final selectedDate = cubit.selectedDate;
-              //  final selectedTime = cubit.selectedTime;
               // validate if date and time is selected
               if (selectedDate == null || selectedTime == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -270,11 +281,17 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                 return;
               }
               // save reminder in cubit only and return true
-              AddNoteCubit.get(context).setReminder(
-                date: scheduledDate,
-                //  repeat: selectedRepeatOption,
-              );
+              AddNoteCubit.get(
+                context,
+              ).setReminder(date: scheduledDate, repeat: selectedRepeatOption);
               Navigator.pop(dialogContext, true);
+            },
+            onChangedRepeat: (value) {
+              selectedRepeatOption = value;
+            },
+            ondeleteReminderF: () {
+              Navigator.pop(dialogContext, false);
+              AddNoteCubit.get(context).deleteReminder();
             },
           ),
         );
@@ -283,97 +300,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
 
     return result ?? false;
   }
-
-  // show dialog - edit reminder
-  // Future<bool> showEditDialogF() async {
-  //   String? selectedRepeatOption;
-  //   final result = await showDialog<bool>(
-  //     context: context,
-  //     builder: (context) {
-  //       TimeOfDay? selectedTime = BlocProvider.of<AddNoteCubit>(
-  //         context,
-  //       ).selectedTime;
-  //       DateTime? selectedDate = BlocProvider.of<AddNoteCubit>(
-  //         context,
-  //       ).reminderDate;
-  //       return EditReminderDialog(
-  //         dateController: dateController,
-  //         timeController: timeController,
-  //         onSelectTime: () async {
-  //           () => showTimePicker(context: context, initialTime: TimeOfDay.now())
-  //               .then((value) {
-  //                 if (value != null) {
-  //                   timeController.text = value.format(context);
-  //                   selectedTime = value; // save value of time
-  //                 }
-  //               });
-  //         },
-  //         onSelectDate: () {
-  //           showDatePicker(
-  //             context: context,
-  //             initialDate: DateTime.now(),
-  //             firstDate: DateTime.now(),
-  //             lastDate: DateTime(DateTime.now().year + 5, 1, 1),
-  //           ).then((value) {
-  //             if (value != null) {
-  //               dateController.text = dateFormat.format(value);
-  //               selectedDate = value; // save value of date
-
-  //               if (selectedDate!.day != DateTime.now().day &&
-  //                   selectedDate!.isBefore(DateTime.now())) {
-  //                 ScaffoldMessenger.of(context).showSnackBar(
-  //                   const SnackBar(
-  //                     content: Text('Please select a date in the future'),
-  //                   ),
-  //                 );
-  //                 dateController.clear();
-  //                 selectedDate = null;
-  //               }
-  //             }
-  //           });
-  //         },
-  //         saveReminderF: () {
-  //           // validate if date and time is selected
-  //           if (selectedDate == null || selectedTime == null) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               const SnackBar(content: Text('Please select date and time')),
-  //             );
-  //             return;
-  //           }
-  //           final scheduledDate = DateTime(
-  //             selectedDate!.year,
-  //             selectedDate!.month,
-  //             selectedDate!.day,
-  //             selectedTime!.hour,
-  //             selectedTime!.minute,
-  //           );
-  //           if (scheduledDate.isBefore(DateTime.now())) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               const SnackBar(
-  //                 content: Text('Please select date and time in the future'),
-  //               ),
-  //             );
-  //             return;
-  //           }
-  //           // save reminder in cubit only and return true
-  //           BlocProvider.of<AddNoteCubit>(context).setReminder(
-  //             date: scheduledDate,
-  //             //  repeat: selectedRepeatOption,
-  //           );
-  //           Navigator.pop(context, true);
-  //         },
-  //         onCancelF: () => Navigator.pop(context, false),
-  //         ondeleteReminderF: () {
-  //           // delete reminder
-  //           BlocProvider.of<AddNoteCubit>(context).deleteReminder();
-  //           Navigator.pop(context, true);
-  //         },
-  //       );
-  //     },
-  //   );
-
-  //   return result ?? false;
-  // }
 
   //------------------------------------------
 

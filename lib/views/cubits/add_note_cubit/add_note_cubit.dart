@@ -11,7 +11,10 @@ import 'package:reminder_app/views/widgets/repeat_options_list.dart';
 part 'add_note_state.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {
-  AddNoteCubit() : super(AddNoteInitial());
+  AddNoteCubit() : super(AddNoteInitial()) {
+    id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+  }
+  late final int id;
 
   Color noteColor = colors.first;
   Color noteBorderDateColor = borderColors.first;
@@ -24,10 +27,22 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(NoteChangeColor());
   }
 
-  //int id = 0;  // id of note saved and id for reminder at the same time?
   // int id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+  // note reminder data
+  DateTime? reminderDate;
+  // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
+  String? repeatOption;
+  bool hasReminder = false;
+  void setReminder({required DateTime date, String? repeat}) {
+    reminderDate = date;
+    repeatOption = repeat;
+    hasReminder = true;
+    //id intialized
+    debugPrint('reminder date $reminderDate  repeat $repeatOption id $id');
+    emit(ReminderChanged());
+  }
+
   // Add note to notes bos using hive method
-  // add and delete reminder
   // add or edit function
   // Send reminder function and schedule notification
   void sendReminder({
@@ -77,50 +92,33 @@ class AddNoteCubit extends Cubit<AddNoteState> {
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       );
     }
-
-    // check after schedule
+    // Check after schedule
     NotificationsService().getPendingNotifications();
     debugPrint('notification scheduled done for: $scheduledDate');
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(
-    //     backgroundColor: Colors.green,
-    //     content: Text('Reminder scheduled successfully'),
-    //   ),
-    // );
   }
 
-  //  search about id
-  void deleteReminder() {
-    NotificationsService().cancelNotification(0);
+  // Delete reminder
+  Future<void> deleteReminder() async {
+    await NotificationsService().cancelNotification(id);
+    debugPrint('reminder deleted');
+    hasReminder = false;
+    emit(ReminderDeleted());
   }
 
   //  data
-  TimeOfDay? selectedTime;
-  DateTime? selectedDate;
-  void setDate({required DateTime date}) {
-    selectedDate = date;
-    emit(DateChanged());
-  }
+  // TimeOfDay? selectedTime;
+  // DateTime? selectedDate;
+  // void setDate({required DateTime date}) {
+  //   selectedDate = date;
+  //   emit(DateChanged());
+  // }
 
-  void setTime({required TimeOfDay time}) {
-    selectedTime = time;
-    emit(TimeChanged());
-  }
+  // void setTime({required TimeOfDay time}) {
+  //   selectedTime = time;
+  //   emit(TimeChanged());
+  // }
 
-  // note reminder data
-  DateTime? reminderDate;
-  // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
-  String? repeatOption;
-  bool hasReminder = false;
-  void setReminder({required DateTime date, String? repeat}) {
-    reminderDate = date;
-    repeatOption = repeat;
-    hasReminder = true;
-    emit(ReminderChanged());
-  }
-
-  // save note reminder
-
+  // Save note reminder
   void addReminder({
     required String title,
     required String content,
@@ -128,7 +126,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     bool? isPinned,
   }) async {
     final noteReminder = NoteModel(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      id: id,
       title: title,
       content: content,
       date: date,
@@ -136,9 +134,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       color: noteColor.toARGB32(),
       colorBorderDate: noteBorderDateColor.toARGB32(),
     );
-    // add color to note
-    // note.color = noteColor.toARGB32();
-    // note.colorBorderDate = noteBorderDateColor.toARGB32();
+
     emit(AddNoteLoading());
     await Future.delayed(const Duration(milliseconds: 300));
     // access notes box
