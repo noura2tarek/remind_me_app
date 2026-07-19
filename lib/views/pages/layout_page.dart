@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/pages/add_new_reminder_page.dart';
 import 'package:reminder_app/views/pages/home_page.dart';
 import 'package:reminder_app/views/pages/search_page.dart';
@@ -16,8 +17,8 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
   int _bottomNavIndex = 0;
-  List<IconData> iconList = [Icons.settings, Icons.search_rounded];
-  List<Widget> pages = [HomePage(), SearchPage()];
+  List<IconData> iconList = [Icons.notes_outlined, Icons.search_rounded];
+  List<Widget> pages = [const HomePage(), const SearchPage()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,10 +31,15 @@ class _LayoutPageState extends State<LayoutPage> {
           // Navigate to add new reminder page
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) =>  BlocProvider(
-                create: (context) => AddNoteCubit(),
-                child: const AddNewReminderPage(),
-              ),
+              builder: (contextt) {
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (contextt) => AddNoteCubit()),
+                    BlocProvider.value(value: NotesCubit.get(context)),
+                  ],
+                  child: const AddNewReminderPage(),
+                );
+              },
             ),
           );
         },

@@ -46,23 +46,24 @@ class RemindersPage extends StatelessWidget {
         .where((note) => note.isPinned == true)
         .toList();
     return CustomScrollView(
-      // crossAxisAlignment: CrossAxisAlignment.start,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
-        const SliverToBoxAdapter(
-          child: Text(
-            'Pinned',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+        if (pinnedNotes.isNotEmpty) ...[
+          const SliverToBoxAdapter(
+            child: Text(
+              'Pinned',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
           ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
-        // list view horizontal of pinned notes
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: 150,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                /*
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          // list view horizontal of pinned notes
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 150,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  /*
                  NoteModel(
                     id: index,
                     title: 'Coffee',
@@ -72,17 +73,16 @@ class RemindersPage extends StatelessWidget {
                     colorBorderDate: 0xff4392C6,
                   )
                 */
-                return CardItem(
-                  note: pinnedNotes[index],
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const SizedBox(width: 10);
-              },
-              itemCount: pinnedNotes.length,
+                  return CardItem(note: pinnedNotes[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(width: 10);
+                },
+                itemCount: pinnedNotes.length,
+              ),
             ),
           ),
-        ),
+        ],
         const SliverToBoxAdapter(child: SizedBox(height: 20)),
         const SliverToBoxAdapter(
           child: Text(

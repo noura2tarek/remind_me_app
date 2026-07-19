@@ -21,7 +21,8 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   TextEditingController contentController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-  DateFormat dateFormat = DateFormat('dd/mm/yyyy');
+  //DateFormat dateFormat = DateFormat('dd/mm/yyyy');
+  DateFormat dateFormat = DateFormat('d MMM, h:mm a');
   bool isPinned = false;
 
   @override
@@ -29,10 +30,10 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
     return BlocConsumer<AddNoteCubit, AddNoteState>(
       listener: (context, state) {
         if (state is AddNoteSuccess) {
-          // call fetch notes
-          NotesCubit.get(context).fetchNotes();
           // close the page
           Navigator.of(context).pop();
+          // call fetch notes
+          NotesCubit.get(context).fetchNotes();
           debugPrint('success add note with title ${state.title}');
         }
         if (state is AddNoteError) {
@@ -44,12 +45,9 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
         }
       },
       builder: (context, state) {
-        DateTime? reminderDate = BlocProvider.of<AddNoteCubit>(
-          context,
-        ).reminderDate;
-        bool hasReminder = BlocProvider.of<AddNoteCubit>(context).hasReminder;
-        Color noteColor = BlocProvider.of<AddNoteCubit>(context).noteColor;
-        
+        DateTime? reminderDate = AddNoteCubit.get(context).reminderDate;
+        bool hasReminder = AddNoteCubit.get(context).hasReminder;
+        Color noteColor = AddNoteCubit.get(context).noteColor;
         return Scaffold(
           backgroundColor: noteColor,
           appBar: AppBar(
@@ -173,7 +171,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                         TextButton(
                           onPressed: () async {
                             // show dialog
-                          //  await showEditDialogF();
+                            //  await showEditDialogF();
                           },
                           child: Text(
                             formatReminder(reminderDate ?? DateTime.now()),
@@ -199,14 +197,8 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        // TimeOfDay? selectedTime = BlocProvider.of<AddNoteCubit>(
-        //   context,
-        // ).selectedTime;
-        // DateTime? selectedDate = BlocProvider.of<AddNoteCubit>(
-        //   context,
-        // ).selectedDate;
-        DateTime? selectedDate ;
-        TimeOfDay? selectedTime ;
+        DateTime? selectedDate;
+        TimeOfDay? selectedTime;
         return BlocProvider.value(
           value: AddNoteCubit.get(context),
           child: CustomAlertDialog(
@@ -214,20 +206,20 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
             dateController: dateController,
             timeController: timeController,
             onSelectTime: () {
-              //TimeOfDay? selectedTime = AddNoteCubit.get(context).selectedTime;
+              // TimeOfDay? selectedTime = AddNoteCubit.get(context).selectedTime;
               showTimePicker(
                 context: dialogContext,
                 initialTime: TimeOfDay.now(),
               ).then((value) {
                 if (value != null) {
                   timeController.text = value.format(dialogContext);
-                  AddNoteCubit.get(context).setTime(time: value);
-                   selectedTime = value; // save value of time
+                  // AddNoteCubit.get(context).setTime(time: value);
+                  selectedTime = value; // save value of time
                 }
               });
             },
             onSelectDate: () {
-            //  DateTime? selectedDate = AddNoteCubit.get(context).selectedDate;
+              //  DateTime? selectedDate = AddNoteCubit.get(context).selectedDate;
               showDatePicker(
                 context: dialogContext,
                 initialDate: DateTime.now(),
@@ -236,8 +228,8 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               ).then((value) {
                 if (value != null) {
                   dateController.text = dateFormat.format(value);
-                     selectedDate = value; // save value of date
-                  AddNoteCubit.get(context).setDate(date: value);
+                  selectedDate = value; // save value of date
+                  // AddNoteCubit.get(context).setDate(date: value);
                   if (selectedDate!.day != DateTime.now().day &&
                       selectedDate!.isBefore(DateTime.now())) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -252,9 +244,9 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               });
             },
             saveReminderF: () {
-              // final cubit = AddNoteCubit.get(context);
-              // final selectedDate = cubit.selectedDate;
-              // final selectedTime = cubit.selectedTime;
+              //  final cubit = AddNoteCubit.get(context);
+              //  final selectedDate = cubit.selectedDate;
+              //  final selectedTime = cubit.selectedTime;
               // validate if date and time is selected
               if (selectedDate == null || selectedTime == null) {
                 ScaffoldMessenger.of(context).showSnackBar(

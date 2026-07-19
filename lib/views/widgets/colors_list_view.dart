@@ -55,11 +55,11 @@ class ColorItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTab,
       child: Container(
-        width: 45,
-        height: 45,
+        width: 40,
+        height: 40,
         margin: const EdgeInsets.only(right: 6),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
           color: color,
           border: isSelected ? Border.all(color: colors.last) : null,
         ),

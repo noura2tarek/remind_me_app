@@ -15,7 +15,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   Color noteColor = colors.first;
   Color noteBorderDateColor = borderColors.first;
-  static AddNoteCubit get(BuildContext context) => BlocProvider.of(context);
+  static AddNoteCubit get(BuildContext context) =>
+      BlocProvider.of<AddNoteCubit>(context);
 
   void changeColor(Color color) {
     noteColor = color;
@@ -28,8 +29,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   // Add note to notes bos using hive method
   // add and delete reminder
   // add or edit function
-  // Verify reminder function and schedule notification
-
+  // Send reminder function and schedule notification
   void sendReminder({
     required String title,
     required String content,
@@ -97,14 +97,16 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   //  data
   TimeOfDay? selectedTime;
   DateTime? selectedDate;
-   void setDate({required DateTime date}){
-     selectedDate = date;
-     emit(DateChanged());
-   }
-   void setTime({required TimeOfDay time}){
-     selectedTime = time;
-     emit(TimeChanged());
-   }
+  void setDate({required DateTime date}) {
+    selectedDate = date;
+    emit(DateChanged());
+  }
+
+  void setTime({required TimeOfDay time}) {
+    selectedTime = time;
+    emit(TimeChanged());
+  }
+
   // note reminder data
   DateTime? reminderDate;
   // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
@@ -117,7 +119,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(ReminderChanged());
   }
 
-// save note reminder
+  // save note reminder
+
   void addReminder({
     required String title,
     required String content,

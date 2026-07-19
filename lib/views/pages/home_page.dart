@@ -12,33 +12,30 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // if notes box have empty data show no reminders page or notes page when have data
-    return BlocProvider(
-      create: (context) => NotesCubit()..fetchNotes(),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 66,
-          bottom: 16,
-          right: 16,
-          left: 16,
-        ),
-        child: RefreshIndicator(
-          onRefresh: () async => NotesCubit.get(context).fetchNotes(),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Reminders',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: kTextColor,
-                ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 66,
+        bottom: 16,
+        right: 16,
+        left: 16,
+      ),
+      child: RefreshIndicator(
+        onRefresh: () async => NotesCubit.get(context).fetchNotes(),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reminders',
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: kTextColor,
               ),
-              SizedBox(height: 35),
-              // rest of the page -- notes or empty data
-              Expanded(child: RestOfThePage()),
-            ],
-          ),
+            ),
+            SizedBox(height: 35),
+            // rest of the page -- notes or empty data
+            Expanded(child: RestOfThePage()),
+          ],
         ),
       ),
     );
