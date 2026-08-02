@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:reminder_app/views/widgets/note_item.dart';
 import 'package:reminder_app/views/widgets/reminders_text.dart';
 import 'package:reminder_app/views/widgets/search_text_field.dart';
-import 'package:reminder_app/views/widgets/upcoming_reminders_list.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -20,7 +20,6 @@ class SearchPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RemindersText(title: 'Search Reminders', fontSize: 22),
-
             // Search text field
             Padding(
               padding: EdgeInsets.symmetric(vertical: 20),
@@ -76,7 +75,7 @@ class RemindersSearchGridView extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final note = searchNotes[index];
-        return ReminderNoteItem2(note: note);
+        return ReminderNoteItem(note: note, inGrid: true, fromSearch: true);
       },
     );
   }

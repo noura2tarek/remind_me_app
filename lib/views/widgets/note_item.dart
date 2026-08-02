@@ -8,9 +8,15 @@ import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/pages/edit_reminder_page.dart';
 
 class ReminderNoteItem extends StatelessWidget {
-  const ReminderNoteItem({super.key, required this.note, this.inGrid = false});
+  const ReminderNoteItem({
+    super.key,
+    required this.note,
+    this.inGrid = false,
+     this.fromSearch = false,
+  });
   final NoteModel note;
   final bool inGrid;
+  final bool fromSearch;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -63,7 +69,7 @@ class ReminderNoteItem extends StatelessWidget {
       },
       child: Container(
         constraints: !inGrid ? const BoxConstraints(minHeight: 123) : null,
-        padding: const EdgeInsets.all(15),
+        padding:  EdgeInsets.all(fromSearch ? 10 : 16),
         width: !inGrid ? MediaQuery.of(context).size.width * 0.45 : null,
         decoration: BoxDecoration(
           color: Color(note.color ?? 0xff000000),
