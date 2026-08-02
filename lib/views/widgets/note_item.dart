@@ -8,8 +8,9 @@ import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/pages/edit_reminder_page.dart';
 
 class ReminderNoteItem extends StatelessWidget {
-  const ReminderNoteItem({super.key, required this.note});
+  const ReminderNoteItem({super.key, required this.note, this.inGrid = false});
   final NoteModel note;
+  final bool inGrid;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -61,32 +62,38 @@ class ReminderNoteItem extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 15),
-        width: MediaQuery.of(context).size.width * 0.56,
+        constraints: !inGrid ? const BoxConstraints(minHeight: 123) : null,
+        padding: const EdgeInsets.all(15),
+        width: !inGrid ? MediaQuery.of(context).size.width * 0.45 : null,
         decoration: BoxDecoration(
           color: Color(note.color ?? 0xff000000),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               note.title,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 8),
-            if (note.content != null && note.content!.isNotEmpty)
+            const SizedBox(height: 6),
+            if (note.content != null && note.content!.isNotEmpty) ...[
               Text(
                 note.content ?? "",
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black54,
                   fontSize: 18,
-                  height: 1.3,
+                  height: !inGrid ? 1.3 : null,
                 ),
               ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 10),
+            ],
+            // Date
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: !inGrid
+                  ? const EdgeInsets.symmetric(horizontal: 8, vertical: 2)
+                  : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Color(note.colorBorderDate ?? 0xffffffff),
