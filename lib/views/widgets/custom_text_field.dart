@@ -10,12 +10,14 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     this.fontSize = 18,
     this.maxlines = 1,
+    this.onChanged,
   });
   final TextEditingController controller;
   final Color noteColor;
   final String hintText;
   final double fontSize;
   final int maxlines;
+  final void Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -27,6 +29,7 @@ class CustomTextField extends StatelessWidget {
         fontSize: fontSize,
         color: noteColor == Colors.black38 ? Colors.white : kTextColor,
       ),
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
@@ -34,6 +37,7 @@ class CustomTextField extends StatelessWidget {
           color: noteColor == Colors.black38 ? Colors.white : kTextColor,
         ),
         border: InputBorder.none,
+        
         // labelStyle: TextStyle(
         //   fontSize: fontSize,
         //   color: noteColor == Colors.black38 ? Colors.white : kTextColor,

@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -6,7 +5,6 @@ import 'package:meta/meta.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/services/notifications_service.dart';
 import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/widgets/repeat_options_list.dart';
 
 part 'add_note_state.dart';
 
@@ -16,10 +14,23 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
   late final int id;
 
-  Color noteColor = colors.first;
-  Color noteBorderDateColor = borderColors.first;
   static AddNoteCubit get(BuildContext context) =>
       BlocProvider.of<AddNoteCubit>(context);
+
+  Color noteColor = colors.first;
+  Color noteBorderDateColor = borderColors.first;
+  bool isPinned = false;
+  // note reminder data
+  DateTime? reminderDate = DateTime.now();
+  TimeOfDay? selectedTime = TimeOfDay.now();
+  // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
+  String? repeatOption;
+
+  // change pinned
+  void changePinned() {
+    isPinned = !isPinned;
+    emit(NoteChangePinned());
+  }
 
   void changeColor(Color color) {
     noteColor = color;
@@ -27,38 +38,49 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(NoteChangeColor());
   }
 
-  // int id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-  // note reminder data
-  DateTime? reminderDate;
-  // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
-  String? repeatOption;
-  bool hasReminder = false;
+  void setReminderDate({required DateTime date}) {
+    reminderDate = date;
+    emit(DateChanged());
+  }
+
+  void setReminderTime({required TimeOfDay time}) {
+    selectedTime = time;
+    emit(TimeChanged());
+  }
+
+  void setReminderRepeat({required String repeat}) {
+    repeatOption = repeat;
+    emit(RepeatChanged());
+  }
+ void changeReminderVar(bool value) {
+   hasReminder = value;
+   emit(ReminderChanged());
+ }
+  // Set reminder  and save it to local variables
   void setReminder({required DateTime date, String? repeat}) {
     reminderDate = date;
     repeatOption = repeat;
     hasReminder = true;
     //id intialized
-    debugPrint('reminder date $reminderDate  repeat $repeatOption id $id');
+    debugPrint('reminder date $reminderDate  repeat $repeatOption ');
     emit(ReminderChanged());
   }
 
   // Add note to notes bos using hive method
   // add or edit function
   // Send reminder function and schedule notification
-  void sendReminder({
+  Future<void> sendReminder({
     required String title,
     required String content,
-    required DateTime scheduledDate,
     required int id,
-    String? selectedRepeatOption,
   }) async {
     // send scheduled notification to user
-    debugPrint('repeat option selected: $selectedRepeatOption');
-    if (selectedRepeatOption != null) {
-      if (selectedRepeatOption == repeatOptions[0]) {
+    //  debugPrint('repeat option selected: $selectedRepeatOption');
+    if (!(repeatOption == repeatOptions[0])) {
+      if (repeatOption == repeatOptions[1]) {
         final timeOfDay = TimeOfDay(
-          hour: scheduledDate.hour,
-          minute: scheduledDate.minute,
+          hour: reminderDate?.hour ?? 0,
+          minute: reminderDate?.minute ?? 0,
         );
         await NotificationsService().sendDailyNotification(
           title: title,
@@ -66,20 +88,20 @@ class AddNoteCubit extends Cubit<AddNoteState> {
           time: timeOfDay,
           id: id,
         );
-      } else if (selectedRepeatOption == repeatOptions[1]) {
-        selectedRepeatOption = 'weekly';
+      } else if (repeatOption == repeatOptions[2]) {
+        repeatOption = 'weekly';
         await NotificationsService().sendWeeklyNotification(
           title: title,
           body: content,
-          dateTime: scheduledDate,
+          dateTime: reminderDate ?? DateTime.now(),
           id: id,
         );
-      } else if (selectedRepeatOption == repeatOptions[2]) {
-        selectedRepeatOption = 'monthly';
+      } else if (repeatOption == repeatOptions[3]) {
+        repeatOption = 'monthly';
         await NotificationsService().sendMonthlyNotification(
           title: title,
           body: content,
-          dateTime: scheduledDate,
+          dateTime: reminderDate ?? DateTime.now(),
           id: id,
         );
       }
@@ -88,49 +110,39 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       await NotificationsService().sendScheduledNotification(
         title: title,
         body: content,
-        scheduledDate: scheduledDate,
-        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        scheduledDate: reminderDate ?? DateTime.now(),
+        id: id,
       );
     }
-    // Check after schedule
-    NotificationsService().getPendingNotifications();
-    debugPrint('notification scheduled done for: $scheduledDate');
+    emit(ReminderSent());
+    debugPrint('notification scheduled done for: $reminderDate');
   }
 
   // Delete reminder
-  Future<void> deleteReminder() async {
-    await NotificationsService().cancelNotification(id);
-    debugPrint('reminder deleted');
-    hasReminder = false;
-    emit(ReminderDeleted());
-  }
-
-  //  data
-  // TimeOfDay? selectedTime;
-  // DateTime? selectedDate;
-  // void setDate({required DateTime date}) {
-  //   selectedDate = date;
-  //   emit(DateChanged());
+  // Future<void> deleteReminder() async {
+  //   await NotificationsService().cancelNotification(id);
+  //   debugPrint('reminder deleted');
+  //   hasReminder = false;
+  //   emit(ReminderDeleted());
   // }
+  
+  bool hasReminder = false;
 
-  // void setTime({required TimeOfDay time}) {
-  //   selectedTime = time;
-  //   emit(TimeChanged());
-  // }
-
-  // Save note reminder
-  void addReminder({
+  //------ Save note reminder in hive local database
+  void saveReminder({
     required String title,
     required String content,
-    required String date,
-    bool? isPinned,
+    required DateTime date,
   }) async {
+    // generate id
+
     final noteReminder = NoteModel(
       id: id,
       title: title,
       content: content,
       date: date,
-      isPinned: isPinned ?? false,
+      isPinned: isPinned,
+      repeatOption: repeatOption ?? "",
       color: noteColor.toARGB32(),
       colorBorderDate: noteBorderDateColor.toARGB32(),
     );
@@ -142,15 +154,15 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       var box = Hive.box<NoteModel>(kRemindersBox);
       // add note
       await box.add(noteReminder);
-      emit(AddNoteSuccess(title: noteReminder.title));
+      emit(AddNoteSuccess());
     } catch (e) {
       emit(AddNoteError(errorMsg: e.toString()));
     }
-    if (hasReminder && reminderDate != null) {
-      sendReminder(
+    if (reminderDate != null && hasReminder) {
+      await sendReminder(
         title: noteReminder.title,
         content: noteReminder.content ?? "",
-        scheduledDate: reminderDate!,
+        // scheduledDate: reminderDate!,
         id: noteReminder.id,
       );
     }

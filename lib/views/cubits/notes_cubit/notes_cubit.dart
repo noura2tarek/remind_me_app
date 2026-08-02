@@ -6,7 +6,6 @@ import 'package:meta/meta.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/services/notifications_service.dart';
 import 'package:reminder_app/utils/constants.dart';
-
 part 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {
@@ -15,13 +14,75 @@ class NotesCubit extends Cubit<NotesState> {
   // notes cubit object
   static NotesCubit get(BuildContext context) =>
       BlocProvider.of<NotesCubit>(context);
+  // notes list
   List<NoteModel> notes = [];
+  List<NoteModel> pinnedNotes = [];
+
   // fetch notes from hive
-  void fetchNotes() {
+  Future<void> fetchNotes() async {
+    // get upcoming reminders first
+    debugPrint('Pending remindeers...');
+    final pendingReminders = await NotificationsService()
+        .getPendingNotifications();
+    final pendingIds = pendingReminders.map((e) => e.id).toSet();
+
+    for (final item in pendingReminders) {
+      debugPrint('pending ID: ${item.id}, Title: ${item.title}');
+    }
+    debugPrint('End of Pending reminders...');
+
     var box = Hive.box<NoteModel>(kRemindersBox);
+    
+    // Get all notes (reminders with colors and other parameters)
     notes = box.values.toList();
-    // get reminders
-    NotificationsService().getPendingNotifications();
+    notes.removeWhere((note) => !pendingIds.contains(note.id));
+    debugPrint('Notes...');
+    for (final item in notes) {
+      debugPrint(' note ID: ${item.id}, Title: ${item.title}');
+    }
+    debugPrint('End of Notes...');
+
+    pinnedNotes = notes.where((note) => note.isPinned == true).toList();
     emit(NotesSuccess());
+  }
+
+  // search controller
+  TextEditingController searchController = TextEditingController();
+  //  notes search list
+  List<NoteModel> notesSearchList = <NoteModel>[];
+
+  void searchNotes(String query) {
+    notesSearchList = notes
+        .where((note) => note.title.contains(query))
+        .toList();
+    List<NoteModel> result = [];
+
+    if (notesSearchList.isNotEmpty) {
+      result = notesSearchList;
+      emit(NoteSearchSuccess(notesSearchList: result));
+    } else {
+      // result = notes;
+      notesSearchList = [];
+      emit(NoteSearchEmptyData());
+    }
+  }
+
+  // On Delete search text
+  void onDeleteSearchText() async {
+    searchController.clear();
+    notesSearchList = [];
+    emit(NoteDeleteSearch());
+    // if(isFromSearch) notesSearchList = notes;
+  }
+
+  // Delete note and its reminder
+  void deleteNote(NoteModel note) async {
+    // delete note reminder first
+    await NotificationsService().cancelNotification(note.id);
+    await note.delete();
+    emit(NoteDeleted());
+    // fetch notes again
+    fetchNotes();
+    debugPrint('Note deleted');
   }
 }

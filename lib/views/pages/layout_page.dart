@@ -1,5 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
@@ -16,53 +17,94 @@ class LayoutPage extends StatefulWidget {
 }
 
 class _LayoutPageState extends State<LayoutPage> {
-  int _bottomNavIndex = 0;
   List<IconData> iconList = [Icons.notes_outlined, Icons.search_rounded];
+
   List<Widget> pages = [const HomePage(), const SearchPage()];
+  int _currentIndex = 0;
+
+  // Handle back pressed
+  Future<bool> _handleBackPressed() async {
+    // if home is selected, show exit dialog
+    final bool? shouldExit = await showConfirmExitDialog(context);
+    if (shouldExit ?? false) {
+      await SystemNavigator.pop();
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      extendBody: true,
-      body: pages[_bottomNavIndex], //destination screen
-      floatingActionButton: FloatingActionButton(
-        shape: const CircleBorder(),
-        onPressed: () {
-          // Navigate to add new reminder page
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (contextt) {
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider(create: (contextt) => AddNoteCubit()),
-                    BlocProvider.value(value: NotesCubit.get(context)),
-                  ],
-                  child: const AddNewReminderPage(),
-                );
-              },
-            ),
-          );
-        },
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBackPressed();
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        child: const Icon(Icons.add, color: kPrimaryColor, size: 35),
+        extendBody: true,
+        body: pages[_currentIndex], //destination screen
+        floatingActionButton: FloatingActionButton(
+          shape: const CircleBorder(),
+          onPressed: () {
+            // Navigate to add new reminder page
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (contextt) {
+                  return MultiBlocProvider(
+                    providers: [
+                      BlocProvider(create: (contextt) => AddNoteCubit()),
+                      BlocProvider.value(value: NotesCubit.get(context)),
+                    ],
+                    child: const AddNewReminderPage(),
+                  );
+                },
+              ),
+            );
+          },
+          backgroundColor: Colors.white,
+          child: const Icon(Icons.add, color: kPrimaryColor, size: 35),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+          itemCount: iconList.length,
+          tabBuilder: (int index, bool isActive) {
+            return Icon(
+              iconList[index],
+              size: 24,
+              color: isActive ? kPrimaryColor : kTextColor,
+            );
+          },
+          activeIndex: _currentIndex,
+          gapLocation: GapLocation.center,
+          notchSmoothness: NotchSmoothness.sharpEdge,
+          leftCornerRadius: 28,
+          rightCornerRadius: 28,
+          onTap: (index) {
+            setState(() => _currentIndex = index);
+          },
+          //other params
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
-        itemCount: iconList.length,
-        tabBuilder: (int index, bool isActive) {
-          return Icon(
-            iconList[index],
-            size: 24,
-            color: isActive ? kPrimaryColor : kTextColor,
-          );
-        },
-        activeIndex: _bottomNavIndex,
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.sharpEdge,
-        leftCornerRadius: 28,
-        rightCornerRadius: 28,
-        onTap: (index) => setState(() => _bottomNavIndex = index),
-        //other params
+    );
+  }
+ 
+ // Show confirm exit dialog
+  Future<bool?> showConfirmExitDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Are you sure you want to exit?'),
+        actions: [
+          TextButton(
+            child: const Text('No'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: const Text('Yes'),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
       ),
     );
   }

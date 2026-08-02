@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:reminder_app/utils/constants.dart';
+import 'package:reminder_app/utils/functions.dart';
 import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/widgets/colors_list_view.dart';
@@ -22,9 +22,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   late TextEditingController dateController;
   late TextEditingController timeController;
   late TextEditingController repeatController;
-  DateFormat dateFormat = DateFormat('d MMM');
-  // DateFormat dateFormat = DateFormat('d MMM, h:mm a');
-  bool isPinned = false;
   @override
   void initState() {
     titleController = TextEditingController();
@@ -37,6 +34,13 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    repeatController.text =
+        AddNoteCubit.get(context).repeatOption ?? repeatOptions.first;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddNoteCubit, AddNoteState>(
       listener: (context, state) {
@@ -45,7 +49,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
           Navigator.of(context).pop();
           // call fetch notes
           NotesCubit.get(context).fetchNotes();
-          debugPrint('success add note with title ${state.title}');
+          // debugPrint('success add note with title ${state.title}');
         }
         if (state is AddNoteError) {
           debugPrint(state.errorMsg);
@@ -56,30 +60,37 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
         }
       },
       builder: (context, state) {
-        DateTime? reminderDate = AddNoteCubit.get(context).reminderDate;
-        bool hasReminder = AddNoteCubit.get(context).hasReminder;
-        Color noteColor = AddNoteCubit.get(context).noteColor;
+        final cubit = AddNoteCubit.get(context);
+        DateTime? reminderDate = cubit.reminderDate;
+        Color noteColor = cubit.noteColor;
+        bool hasReminder = cubit.hasReminder;
         return Scaffold(
           backgroundColor: noteColor,
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
             actions: [
               IconButton(
                 onPressed: () {
                   // save with parameter pinned boolean optional
-                  setState(() {
-                    isPinned = !isPinned;
-                  });
+                  cubit.changePinned();
                 },
-                icon: Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+                icon: Icon(
+                  cubit.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                ),
               ),
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   // detect a remminder for this note
-                  showDialogF().then((value) => hasReminder = value);
+                  showDialogF().then((value) {
+                    if (value) {
+                      cubit.changeReminderVar(value);
+                    }
+                  });
                 },
-                icon: const Icon(Icons.notifications_none_outlined),
+                icon: Icon(
+                  hasReminder
+                      ? Icons.notifications
+                      : Icons.notifications_none_outlined,
+                ),
               ),
             ],
           ),
@@ -89,10 +100,8 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               DateTime? selectedDate = BlocProvider.of<AddNoteCubit>(
                 context,
               ).reminderDate;
-              bool isreminder = BlocProvider.of<AddNoteCubit>(
-                context,
-              ).hasReminder;
-              if (selectedDate == null || isreminder == false) {
+
+              if (!hasReminder) {
                 // show snackbar
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -102,14 +111,11 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                 return;
               }
 
-              String formattedDate = formatReminder(selectedDate);
-              // Navigator.of(context).pop();
               //add new note in hive
-              AddNoteCubit.get(context).addReminder(
+              AddNoteCubit.get(context).saveReminder(
                 title: titleController.text,
                 content: contentController.text,
-                date: formattedDate,
-                isPinned: isPinned,
+                date: selectedDate ?? DateTime.now(),
               );
             },
             backgroundColor: Colors.white,
@@ -150,6 +156,7 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Padding(
               padding: const EdgeInsets.all(18.0),
               child: Column(
@@ -177,12 +184,16 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                   if (hasReminder == true)
                     Row(
                       children: [
-                        const Icon(Icons.done_all, color: Colors.blue),
+                        const Icon(
+                          Icons.date_range_outlined,
+                          size: 25,
+                          color: Colors.black45,
+                        ),
                         const SizedBox(width: 7),
                         TextButton(
                           onPressed: () async {
                             // show edit dialog
-                            await showDialogF(isEditingReminder: true);
+                            await showDialogF();
                           },
                           child: Text(
                             formatReminder(reminderDate ?? DateTime.now()),
@@ -204,17 +215,15 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   }
 
   // Show remind dialog
-  Future<bool> showDialogF({bool isEditingReminder = false}) async {
-    DateTime? selectedDate = DateTime.now();
-    TimeOfDay? selectedTime;
-    String? selectedRepeatOption;
+  Future<bool> showDialogF() async {
+    final cubit = AddNoteCubit.get(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return BlocProvider.value(
-          value: AddNoteCubit.get(context),
+          value: cubit,
           child: CustomAlertDialog(
-            isEditingReminder: isEditingReminder,
+            repeatOption: cubit.repeatOption ?? repeatOptions.first,
             onCancelF: () => Navigator.pop(dialogContext, false),
             dateController: dateController,
             timeController: timeController,
@@ -227,13 +236,12 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               ).then((value) {
                 if (value != null) {
                   timeController.text = value.format(dialogContext);
-                  // AddNoteCubit.get(context).setTime(time: value);
-                  selectedTime = value; // save value of time
+                  // save value of time
+                  cubit.setReminderTime(time: value);
                 }
               });
             },
             onSelectDate: () {
-              //  DateTime? selectedDate = AddNoteCubit.get(context).selectedDate;
               showDatePicker(
                 context: dialogContext,
                 initialDate: DateTime.now(),
@@ -242,22 +250,26 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
               ).then((value) {
                 if (value != null) {
                   dateController.text = dateFormat.format(value);
-                 selectedDate = value; // save value of date
-                  // AddNoteCubit.get(context).setDate(date: value);
-                  if (selectedDate!.day != DateTime.now().day &&
-                      selectedDate!.isBefore(DateTime.now())) {
+
+                  if (cubit.reminderDate!.day != DateTime.now().day &&
+                      cubit.reminderDate!.isBefore(DateTime.now())) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please select a date in the future'),
                       ),
                     );
-                    dateController.clear();
-                    selectedDate = null;
+                  } else {
+                    // save value of date
+                    cubit.setReminderDate(date: value);
                   }
                 }
               });
             },
             saveReminderF: () {
+              final selectedDate = cubit.reminderDate;
+              final selectedTime = cubit.selectedTime;
+              final selectedRepeatOption = cubit.repeatOption;
+
               // validate if date and time is selected
               if (selectedDate == null || selectedTime == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -266,11 +278,11 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                 return;
               }
               final scheduledDate = DateTime(
-                selectedDate!.year,
-                selectedDate!.month,
-                selectedDate!.day,
-                selectedTime!.hour,
-                selectedTime!.minute,
+                selectedDate.year,
+                selectedDate.month,
+                selectedDate.day,
+                selectedTime.hour,
+                selectedTime.minute,
               );
               if (scheduledDate.isBefore(DateTime.now())) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -281,17 +293,15 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
                 return;
               }
               // save reminder in cubit only and return true
-              AddNoteCubit.get(
-                context,
-              ).setReminder(date: scheduledDate, repeat: selectedRepeatOption);
+              cubit.setReminder(
+                date: scheduledDate,
+                repeat: selectedRepeatOption,
+              );
               Navigator.pop(dialogContext, true);
             },
             onChangedRepeat: (value) {
-              selectedRepeatOption = value;
-            },
-            ondeleteReminderF: () {
-              Navigator.pop(dialogContext, false);
-              AddNoteCubit.get(context).deleteReminder();
+              //  selectedRepeatOption = value;
+              cubit.setReminderRepeat(repeat: value);
             },
           ),
         );
@@ -302,47 +312,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
   }
 
   //------------------------------------------
-
-  // format reminder  -- save reminder with this format in database
-  String formatReminder(DateTime reminderDate) {
-    final now = DateTime.now();
-    final difference = reminderDate.difference(now);
-
-    // Past reminder
-    if (difference.isNegative) {
-      return DateFormat('d MMM, h:mm a').format(reminderDate);
-    }
-
-    // Less than one hour
-    if (difference.inHours < 1) {
-      if (difference.inMinutes <= 1) {
-        return 'In 1 minute';
-      }
-      return 'In ${difference.inMinutes} minutes';
-    }
-
-    // equal one hour
-    if (difference.inHours == 1) {
-      return 'In 1 hour';
-    }
-    // Less than 24 hours but today
-    if (_isSameDay(reminderDate, now)) {
-      return 'Today, ${DateFormat('h:mm a').format(reminderDate)}';
-    }
-
-    // Tomorrow
-    final tomorrow = now.add(const Duration(days: 1));
-    if (_isSameDay(reminderDate, tomorrow)) {
-      return 'Tomorrow, ${DateFormat('h:mm a').format(reminderDate)}';
-    }
-
-    // Other days
-    return DateFormat('d MMM, h:mm a').format(reminderDate);
-  }
-
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
 
   @override
   dispose() {

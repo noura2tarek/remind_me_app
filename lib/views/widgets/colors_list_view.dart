@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:reminder_app/views/cubits/edit_note/edit_note_cubit.dart';
 
 class ColorsListView extends StatefulWidget {
-  const ColorsListView({super.key});
-
+  const ColorsListView({super.key, this.fromEdit = false});
+  final bool fromEdit;
   @override
   State<ColorsListView> createState() => _ColorsListViewState();
 }
@@ -22,11 +23,17 @@ class _ColorsListViewState extends State<ColorsListView> {
           onTab: () {
             setState(() {
               selectedIndex = index;
-              BlocProvider.of<AddNoteCubit>(context).noteColor =
-                  colors[selectedIndex];
+              // BlocProvider.of<AddNoteCubit>(context).noteColor =
+              //     colors[selectedIndex];
+              if (!widget.fromEdit) {
                 BlocProvider.of<AddNoteCubit>(
                   context,
                 ).changeColor(colors[selectedIndex]);
+              } else{
+                BlocProvider.of<EditNoteCubit>(
+                  context,
+                ).changeColor(colors[selectedIndex]);
+              }
             });
           },
           isSelected: selectedIndex == index,

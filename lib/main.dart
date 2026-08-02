@@ -1,7 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:reminder_app/bloc_observer.dart';
 import 'package:reminder_app/models/note_model.dart';
@@ -33,6 +31,10 @@ class ReminderApp extends StatelessWidget {
       title: 'ذكّرني',
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
         colorScheme: ColorScheme.fromSeed(seedColor: kPrimaryColor),
       ),
       home: BlocProvider(

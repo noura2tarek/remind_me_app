@@ -8,7 +8,7 @@ class NoteModel extends HiveObject {
   @HiveField(1)
   String? content;
   @HiveField(2)
-  final String date;
+  DateTime date; // reminder date not note creation date
   @HiveField(3)
   int? color;
   @HiveField(4)
@@ -17,6 +17,8 @@ class NoteModel extends HiveObject {
   bool? isPinned;
   @HiveField(6)
   final int id;
+  @HiveField(7)
+  String repeatOption;
 
   NoteModel({
     required this.title,
@@ -25,6 +27,7 @@ class NoteModel extends HiveObject {
     required this.date,
     this.color,
     this.isPinned = false,
+    this.repeatOption = 'Does not repeat',
     this.colorBorderDate,
   });
 }

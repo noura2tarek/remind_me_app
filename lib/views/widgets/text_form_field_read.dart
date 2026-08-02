@@ -7,18 +7,22 @@ class TextFormFieldRead extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.suffixIcon,
+    this.onChanged,
   });
   final TextEditingController controller;
   final String hintText;
   final Widget suffixIcon;
+  final void Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 49,
       child: TextFormField(
-        readOnly: true,
+        readOnly: true,//-----------
         controller: controller,
-        keyboardType: TextInputType.none,
+        keyboardType: TextInputType.none,//------
+        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: hintText,
           fillColor: kFillColor,
@@ -33,11 +37,4 @@ class TextFormFieldRead extends StatelessWidget {
     );
   }
 }
-//IconButton(
-            // show date picker
-          //   onPressed: onSuffixPressed,
-          //   icon: Icon(suffixIcon),
-          // ),
-//
-//
-//
+

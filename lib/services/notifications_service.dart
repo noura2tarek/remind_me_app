@@ -131,13 +131,15 @@ class NotificationsService {
   }
 
   // Get Pending notifications/ reminders
-  void getPendingNotifications() async {
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     final List<PendingNotificationRequest> pending =
         await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    // debugPrint('Pending  reminder notifications: ${pending.length}');
+    // for (final item in pending) {
+    //   debugPrint('ID: ${item.id}, Title: ${item.title}');
+    // }
 
-    for (final item in pending) {
-      debugPrint('ID: ${item.id}, Title: ${item.title}');
-    }
+    return pending;
   }
 
   // Daily notification at specific time

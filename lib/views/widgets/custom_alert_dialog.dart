@@ -13,23 +13,25 @@ class CustomAlertDialog extends StatelessWidget {
     required this.onSelectTime,
     required this.saveReminderF,
     required this.onCancelF,
-    this.isEditingReminder = false,
     this.title = 'When to remind?',
-    this.ondeleteReminderF,
     this.onChangedRepeat,
+    this.repeatOption = 'Daily',
+    this.onChangetime,
+    this.onChangedate,
   });
   final TextEditingController dateController;
   final TextEditingController timeController;
   final TextEditingController repeatController;
-
+  final String repeatOption;
   final void Function()? onSelectDate;
   final void Function()? onSelectTime;
   final void Function()? saveReminderF;
   final void Function()? onCancelF;
-  final void Function()? ondeleteReminderF;
   final void Function(dynamic)? onChangedRepeat;
-  final bool isEditingReminder;
   final String title;
+  final void Function(String)? onChangetime;
+  final void Function(String)? onChangedate;
+
   @override
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat('d MMM');
@@ -46,6 +48,7 @@ class CustomAlertDialog extends StatelessWidget {
           // Date text field
           TextFormFieldRead(
             controller: dateController,
+            onChanged: onChangedate,
             hintText: dateFormat.format(DateTime.now()),
             suffixIcon: IconButton(
               onPressed: onSelectDate,
@@ -56,7 +59,8 @@ class CustomAlertDialog extends StatelessWidget {
           // Time text field
           TextFormFieldRead(
             controller: timeController,
-            hintText: 'Select Time',
+            onChanged: onChangetime,
+            hintText: TimeOfDay.now().format(context),
             suffixIcon: IconButton(
               onPressed: onSelectTime,
               icon: const Icon(Icons.access_time),
@@ -80,7 +84,7 @@ class CustomAlertDialog extends StatelessWidget {
                 }),
                 controller: repeatController,
                 hintText: 'Select repeat option',
-                initialSelection: repeatOptions.first,
+                initialSelection: repeatOption,
                 keyboardType: TextInputType.text,
                 onSelected: onChangedRepeat,
                 inputDecorationTheme: const InputDecorationTheme(
@@ -110,19 +114,19 @@ class CustomAlertDialog extends StatelessWidget {
           onPressed: onCancelF,
           child: const Text('Cancel', style: TextStyle(color: Colors.black)),
         ),
-        if (isEditingReminder)
-          // Delete reminder
-          TextButton(
-            onPressed: ondeleteReminderF,
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: kTextColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+        // if (isEditingReminder)
+        //   // Delete reminder
+        //   TextButton(
+        //     onPressed: ondeleteReminderF,
+        //     child: const Text(
+        //       'Delete',
+        //       style: TextStyle(
+        //         color: kTextColor,
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.w500,
+        //       ),
+        //     ),
+        //   ),
         // save
         MaterialButton(
           elevation: 0,
