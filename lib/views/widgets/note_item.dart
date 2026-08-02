@@ -12,7 +12,7 @@ class ReminderNoteItem extends StatelessWidget {
     super.key,
     required this.note,
     this.inGrid = false,
-     this.fromSearch = false,
+    this.fromSearch = false,
   });
   final NoteModel note;
   final bool inGrid;
@@ -68,8 +68,8 @@ class ReminderNoteItem extends StatelessWidget {
         );
       },
       child: Container(
-        constraints: !inGrid ? const BoxConstraints(minHeight: 123) : null,
-        padding:  EdgeInsets.all(fromSearch ? 10 : 16),
+        constraints: !inGrid ? const BoxConstraints(minHeight: 127) : null,
+        padding: EdgeInsets.all(fromSearch ? 10 : 16),
         width: !inGrid ? MediaQuery.of(context).size.width * 0.45 : null,
         decoration: BoxDecoration(
           color: Color(note.color ?? 0xff000000),
@@ -84,6 +84,9 @@ class ReminderNoteItem extends StatelessWidget {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
+            if (note.content == null || note.content!.isEmpty) ...[
+              const Spacer(),
+            ],
             if (note.content != null && note.content!.isNotEmpty) ...[
               Text(
                 note.content ?? "",
