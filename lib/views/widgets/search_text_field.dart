@@ -4,9 +4,9 @@ import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 
 class SearchTextField extends StatefulWidget {
-  const SearchTextField({super.key, this.isFromSearch = false, this.height});
-  final bool isFromSearch;
+  const SearchTextField({super.key, this.height});
   final double? height;
+
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
 }
@@ -31,9 +31,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
           suffixIcon: showClearIcon
               ? GestureDetector(
                   onTap: () {
-                    NotesCubit.get(
-                      context,
-                    ).onDeleteSearchText();
+                    NotesCubit.get(context).onDeleteSearchText();
                     setState(() {
                       showClearIcon = false;
                     });
@@ -79,9 +77,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (text.trim().isEmpty) {
-        NotesCubit.get(
-          context,
-        ).onDeleteSearchText();
+        NotesCubit.get(context).onDeleteSearchText();
         return;
       }
       NotesCubit.get(context).searchNotes(text);
