@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:reminder_app/utils/print_state.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -107,14 +108,19 @@ class NotificationsService {
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
-      notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+
+    try {
+      await _flutterLocalNotificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } catch (e, s) {
+      printLog("Schedule Error: $e");
+    }
   }
 
   //   Cancel notification
@@ -134,10 +140,10 @@ class NotificationsService {
   Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     final List<PendingNotificationRequest> pending =
         await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    // debugPrint('Pending  reminder notifications: ${pending.length}');
-    // for (final item in pending) {
-    //   debugPrint('ID: ${item.id}, Title: ${item.title}');
-    // }
+    printLog('Pending  reminder notifications: ${pending.length}');
+    for (final item in pending) {
+      printLog('ID: ${item.id}, Title: ${item.title}');
+    }
 
     return pending;
   }
