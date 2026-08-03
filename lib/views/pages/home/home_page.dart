@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/notifications_service.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
 import 'package:reminder_app/views/pages/home/no_reminders_page.dart';
 import 'package:reminder_app/views/pages/home/reminders_page.dart';
@@ -24,6 +23,7 @@ class HomePage extends StatelessWidget {
             SizedBox(height: 25),
             // rest of the page -- notes or empty data
             Expanded(child: RestOfThePage()),
+            SizedBox(height: 25),
           ],
         ),
       ),
@@ -40,7 +40,7 @@ class RestOfThePage extends StatelessWidget {
     return BlocBuilder<NotesCubit, NotesState>(
       builder: (context, state) {
         List<NoteModel> notes = BlocProvider.of<NotesCubit>(context).notes;
-
+        List<NoteModel> upcomingNotes = BlocProvider.of<NotesCubit>(context).upcomingNotes;
         return notes.isEmpty
             ? const SingleChildScrollView(
                 physics: NeverScrollableScrollPhysics(),
@@ -48,7 +48,7 @@ class RestOfThePage extends StatelessWidget {
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 child: NoRemindersPage(),
               )
-            : RemindersPage(notes: notes);
+            : RemindersPage(upcomingNotes: upcomingNotes);
       },
     );
   }

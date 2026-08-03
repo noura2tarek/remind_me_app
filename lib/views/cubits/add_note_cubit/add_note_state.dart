@@ -34,4 +34,4 @@ class ReminderSent extends AddNoteState {}
 
 class NoteChangePinned extends AddNoteState {}
 
-
+class ReminderFails extends AddNoteState {}

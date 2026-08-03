@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/services/notifications_service.dart';
 import 'package:reminder_app/utils/constants.dart';
+import 'package:reminder_app/utils/print_state.dart';
 
 part 'add_note_state.dart';
 
@@ -24,7 +25,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   DateTime? reminderDate = DateTime.now();
   TimeOfDay? selectedTime = TimeOfDay.now();
   // وقت النوت هوهو وقت وتاريخ ال reminder لاني بسيف تذكيرات اصلا
-  String? repeatOption;
+  String? repeatOption = repeatOptions.first;
 
   // change pinned
   void changePinned() {
@@ -52,16 +53,17 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     repeatOption = repeat;
     emit(RepeatChanged());
   }
- void changeReminderVar(bool value) {
-   hasReminder = value;
-   emit(ReminderChanged());
- }
+
+  void changeReminderVar(bool value) {
+    hasReminder = value;
+    emit(ReminderChanged());
+  }
+
   // Set reminder  and save it to local variables
   void setReminder({required DateTime date, String? repeat}) {
     reminderDate = date;
     repeatOption = repeat;
     hasReminder = true;
-    //id intialized
     debugPrint('reminder date $reminderDate  repeat $repeatOption ');
     emit(ReminderChanged());
   }
@@ -76,46 +78,56 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }) async {
     // send scheduled notification to user
     //  debugPrint('repeat option selected: $selectedRepeatOption');
-    if (!(repeatOption == repeatOptions[0])) {
-      if (repeatOption == repeatOptions[1]) {
-        final timeOfDay = TimeOfDay(
-          hour: reminderDate?.hour ?? 0,
-          minute: reminderDate?.minute ?? 0,
-        );
-        await NotificationsService().sendDailyNotification(
+    try {
+      if (!(repeatOption == repeatOptions[0])) {
+        if (repeatOption == repeatOptions[1]) {
+          final timeOfDay = TimeOfDay(
+            hour: reminderDate?.hour ?? 0,
+            minute: reminderDate?.minute ?? 0,
+          );
+          await NotificationsService().sendDailyNotification(
+            title: title,
+            body: content,
+            time: timeOfDay,
+            id: id,
+          );
+          // emit(ReminderSent());
+        } else if (repeatOption == repeatOptions[2]) {
+          repeatOption = 'weekly';
+          await NotificationsService().sendWeeklyNotification(
+            title: title,
+            body: content,
+            dateTime: reminderDate ?? DateTime.now(),
+            id: id,
+          );
+          // emit(ReminderSent());
+        } else if (repeatOption == repeatOptions[3]) {
+          repeatOption = 'monthly';
+          await NotificationsService().sendMonthlyNotification(
+            title: title,
+            body: content,
+            dateTime: reminderDate ?? DateTime.now(),
+            id: id,
+          );
+          //emit(ReminderSent());
+        }
+      } else {
+        printLog('don\'t repeat  ---- sending reminder...');
+        // normal schedule without repeat
+        await NotificationsService().sendScheduledNotification(
           title: title,
           body: content,
-          time: timeOfDay,
+          scheduledDate: reminderDate ?? DateTime.now(),
           id: id,
         );
-      } else if (repeatOption == repeatOptions[2]) {
-        repeatOption = 'weekly';
-        await NotificationsService().sendWeeklyNotification(
-          title: title,
-          body: content,
-          dateTime: reminderDate ?? DateTime.now(),
-          id: id,
-        );
-      } else if (repeatOption == repeatOptions[3]) {
-        repeatOption = 'monthly';
-        await NotificationsService().sendMonthlyNotification(
-          title: title,
-          body: content,
-          dateTime: reminderDate ?? DateTime.now(),
-          id: id,
-        );
+        printLog('notification scheduled done for: $reminderDate');
+        //  emit(ReminderSent());
       }
-    } else {
-      // normal schedule without repeat
-      await NotificationsService().sendScheduledNotification(
-        title: title,
-        body: content,
-        scheduledDate: reminderDate ?? DateTime.now(),
-        id: id,
-      );
+      emit(ReminderSent());
+    } catch (e) {
+      printLog(e.toString());
+      emit(ReminderFails());
     }
-    emit(ReminderSent());
-    debugPrint('notification scheduled done for: $reminderDate');
   }
 
   // Delete reminder
@@ -125,7 +137,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   //   hasReminder = false;
   //   emit(ReminderDeleted());
   // }
-  
+
   bool hasReminder = false;
 
   //------ Save note reminder in hive local database
@@ -134,8 +146,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     required String content,
     required DateTime date,
   }) async {
-    // generate id
-
     final noteReminder = NoteModel(
       id: id,
       title: title,
@@ -154,6 +164,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       var box = Hive.box<NoteModel>(kRemindersBox);
       // add note
       await box.add(noteReminder);
+      printLog('note added----');
       emit(AddNoteSuccess());
     } catch (e) {
       emit(AddNoteError(errorMsg: e.toString()));

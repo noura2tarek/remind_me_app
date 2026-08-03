@@ -49,7 +49,6 @@ class _AddNewReminderPageState extends State<AddNewReminderPage> {
           Navigator.of(context).pop();
           // call fetch notes
           NotesCubit.get(context).fetchNotes();
-          // debugPrint('success add note with title ${state.title}');
         }
         if (state is AddNoteError) {
           debugPrint(state.errorMsg);
