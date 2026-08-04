@@ -241,7 +241,7 @@ flutter run
 
 | Home Screen                          | Add Reminder                            |
 | -------------------------------------| --------------------------------------- |
-| ![Home](screenshots/home_Screen.png) | ![Add Reminder](screenshots/add_reminder.jpeg) |
+| ![Home](screenshots/home_Screen.jpeg) | ![Add Reminder](screenshots/add_reminder.jpeg) |
 
 | Pin / Unpin Reminder                  | When to remind                       |
 | --------------------------------------| -------------------------------------|
