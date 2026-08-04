@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="YOUR_BANNER_IMAGE_LINK_HERE" width="100%" alt="Remind Me Banner">
+  <img src="https://drive.google.com/file/d/10hdTdKjPa1TksJ39J5Iqx-GHAkslSIAh/view?usp=sharing" width="100%" alt="Remind Me Banner">
 </p>
 
-# Remind Me - Flutter Application
+# Remind Me -"ذكّرني" Flutter Application
 
 ## Project Overview
 
@@ -39,12 +39,12 @@ The application stores reminders locally using **Hive**.
 Each reminder contains:
 
 * Title
-* Description
+* Content
 * Reminder Date
-* Reminder Time
 * Background Color
 * Pinned Status
 * Notification ID
+* Repeat Option
 
 Hive is also used to preserve reminder colors and pin status between app launches.
 
@@ -148,7 +148,7 @@ The application includes a dedicated Search Screen.
 
 Users can:
 
-* Search reminders by title.
+* Search reminders by title or content.
 * Instantly view matching reminders.
 * Clear the search field to restore all reminders.
 
@@ -179,6 +179,18 @@ Highlights:
 * Masonry Grid layout for better content presentation.
 
 ---
+### 10. Exit Confirmation Dialog
+
+To prevent accidental app exits, the application displays a confirmation dialog when the user attempts to leave the Home Screen using the system back button.
+
+Users can:
+
+- Confirm exiting the application.
+- Cancel the action and remain on the Home Screen.
+
+This provides a smoother and more user-friendly experience.
+
+----
 
 # Project Structure
 
@@ -230,31 +242,32 @@ flutter run
 
 # Screenshots
 
-| Home Screen               | Add Reminder                      |
-| ------------------------- | --------------------------------- |
-| ![](screenshots/home.png) | ![](screenshots/add_reminder.png) |
+| Home Screen                          | Add Reminder                            |
+| -------------------------------------| --------------------------------------- |
+| ![Home](screenshots/home_Screen.png) | ![Add Reminder](screenshots/add_reminder.jpeg) |
 
-| Color Picker                      | Upcoming Reminders            |
-| --------------------------------- | ----------------------------- |
-| ![](screenshots/color_picker.png) | ![](screenshots/upcoming.png) |
+| Pin / Unpin Reminder                  | When to remind                       |
+| --------------------------------------| -------------------------------------|
+| ![](screenshots/pin_or_unpin.jpeg)    | ![](screenshots/when_to_remind.jpeg) |
 
-| Search Screen               | Edit Reminder                      |
-| --------------------------- | ---------------------------------- |
-| ![](screenshots/search.png) | ![](screenshots/edit_reminder.png) |
+| Search Screen                         | Edit Reminder                        |
+| ------------------------------------- | ----------------------------------   |
+| ![Search](screenshots/search.jpeg)    | ![](screenshots/edit_rem.jpeg)       |
 
-| Notification                      |
-| --------------------------------- |
-| ![](screenshots/notification.png) |
+| Notification                          | Delete Reminder                      |
+| ------------------------------------- |-----------------------------------   |
+| ![](screenshots/notification.jpeg)    | ![](screenshots/delete_dialog.jpeg)  |   
+| Exit Confirmation Dialog              |                                      |
+| ![](screenshots/exit_dialog.jpeg)     |                                      | 
 
-> Replace the image names above with your actual screenshots.
 
 ---
 
 # Demo Video
 
 <p align="center">
-<a href="YOUR_VIDEO_LINK_HERE">
-    <img src="screenshots/video_preview.png" width="600" alt="Watch Demo">
+<a href="https://drive.google.com/file/d/13CfhsPYND1r1m2Gxb5AHtI3y239Sli8i/view?usp=sharing">
+    <img src="screenshots/home_Screen.jpeg" width="600" alt="Watch Demo">
 </a>
 </p>
 
@@ -304,6 +317,7 @@ flutter run
 * Reminder Search
 * SliverMasonryGrid Layout
 * Slidable Actions
+* Exit Confirmation Dialog
 * Custom Note Colors
 * Responsive UI
 * MVVM Architecture
