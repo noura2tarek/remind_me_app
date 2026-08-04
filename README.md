@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshots/Remind_me_Banner.png" alt="Remind Me Banner">
+  <img src="screenshots/remind_me_banner.png" alt="Remind Me Banner">
 </p>
 
 # Remind Me -"ذكّرني" Flutter Application
