@@ -1,101 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/navigation_service.dart';
 import 'package:reminder_app/utils/functions.dart';
-import 'package:reminder_app/views/cubits/edit_note/edit_note_cubit.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/pages/edit_reminder_page.dart';
 
-class ReminderNoteItem extends StatelessWidget {
-  const ReminderNoteItem({
+// -------- Base Note Item ---------//
+
+class NoteItem extends StatelessWidget {
+  const NoteItem({
     super.key,
     required this.note,
     this.inGrid = false,
     this.fromSearch = false,
+    this.onLongPress,
+    this.onTap,
   });
   final NoteModel note;
   final bool inGrid;
   final bool fromSearch;
+  final void Function()? onLongPress;
+  final void Function()? onTap;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      //show dialog on log press and delete model
-      onLongPress: () async {
-        return await showDialog(
-          context: context,
-          builder: (context2) {
-            return BlocProvider.value(
-              value: NotesCubit.get(context),
-              child: AlertDialog(
-                title: const Text('Are you sure?'),
-                content: const Text(
-                  'Confirm you want to delete the note or not',
-                ),
-                actions: [
-                  // cancel
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context2, false);
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  // delete
-                  OutlinedButton(
-                    onPressed: () async {
-                      // delete note function
-                      deleteNote(note, context);
-                      Navigator.pop(context2, true);
-                    },
-                    child: const Text('Delete'),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-      onTap: () {
-        NavigationService.navigateTo(
-          MultiBlocProvider(
-            providers: [
-              BlocProvider(create: (context) => EditNoteCubit()),
-              BlocProvider.value(value: NotesCubit.get(context)),
-            ],
-            child: EditReminderPage(note: note),
-          ),
-          context,
-        );
-      },
+      //show dialog on log press to edit or delete
+      onLongPress: onLongPress,
+      onTap: onTap,
       child: Container(
-        constraints: !inGrid ? const BoxConstraints(minHeight: 127) : null,
-        padding: EdgeInsets.all(fromSearch ? 10 : 16),
-        width: !inGrid ? MediaQuery.of(context).size.width * 0.45 : null,
+        constraints: !inGrid ? const BoxConstraints(minHeight: 129) : null,
+        padding: EdgeInsets.all(fromSearch ? 10 : 11),
+        width: !inGrid ? MediaQuery.of(context).size.width * 0.50 : null,
+
         decoration: BoxDecoration(
           color: Color(note.color ?? 0xff000000),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: inGrid ? MainAxisSize.min : MainAxisSize.max,
           children: [
-            Text(
-              note.title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            ),
+            !inGrid
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          note.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      // change pin icon
+                      GestureDetector(
+                        onTap: () {
+                          NotesCubit.get(context).changePinStatus(note);
+                        },
+                        child: const Icon(
+                          Icons.push_pin_rounded,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    note.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
             const SizedBox(height: 6),
-            if (note.content == null || note.content!.isEmpty) ...[
-              const Spacer(),
-            ],
-            if (note.content != null && note.content!.isNotEmpty) ...[
-              Text(
-                note.content ?? "",
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 18,
-                  height: !inGrid ? 1.3 : null,
-                ),
-              ),
+            if (note.content == null) ...[const Spacer()],
+            if (note.content != null) ...[
+              !inGrid
+                  ? Expanded(
+                      child: Text(
+                        note.content ?? "",
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 15,
+                          height: !inGrid ? 1.1 : null,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      note.content ?? "",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 15,
+                        height: !inGrid ? 1.1 : null,
+                      ),
+                    ),
               const SizedBox(height: 10),
             ],
             // Date
@@ -118,10 +129,5 @@ class ReminderNoteItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // delete note function
-  Future<void> deleteNote(NoteModel note, BuildContext context) async {
-    NotesCubit.get(context).deleteNote(note);
   }
 }

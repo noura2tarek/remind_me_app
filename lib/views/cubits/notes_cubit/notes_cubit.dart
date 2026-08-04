@@ -39,7 +39,9 @@ class NotesCubit extends Cubit<NotesState> {
     notes = box.values.toList();
     printLog('All Notes...-------------------------');
     for (final item in notes) {
-      printLog(' original note ID: ${item.id}, Title: ${item.title}');
+      printLog(
+        ' original note ID: ${item.id}, Title: ${item.title} pinned ${item.isPinned}',
+      );
     }
     printLog('End of All Notes..-------------------.');
 
@@ -95,6 +97,16 @@ class NotesCubit extends Cubit<NotesState> {
     emit(NoteDeleted());
     // fetch notes again
     fetchNotes();
-    printLog('Note deleted');
+  }
+
+  // change pin status
+
+  void changePinStatus(NoteModel note) async {
+    bool isPinned = note.isPinned ?? false;
+    isPinned = !isPinned;
+    note.isPinned = isPinned;
+    await note.save();
+    fetchNotes();
+    emit(NoteChangePinned());
   }
 }

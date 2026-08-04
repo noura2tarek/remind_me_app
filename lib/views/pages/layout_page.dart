@@ -75,6 +75,7 @@ class _LayoutPageState extends State<LayoutPage> {
               color: isActive ? kPrimaryColor : kTextColor,
             );
           },
+          elevation: 2,
           activeIndex: _currentIndex,
           gapLocation: GapLocation.center,
           notchSmoothness: NotchSmoothness.sharpEdge,

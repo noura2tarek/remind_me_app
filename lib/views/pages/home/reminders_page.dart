@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/widgets/note_item.dart';
+import 'package:reminder_app/views/widgets/reminder_note_item.dart';
+import 'package:reminder_app/views/widgets/pinned_reminders_list.dart';
 import 'package:reminder_app/views/widgets/upcoming_reminders_list.dart';
 
 class RemindersPage extends StatelessWidget {
@@ -25,7 +26,7 @@ class RemindersPage extends StatelessWidget {
           // list view horizontal of pinned notes
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 127,
+              height: 129,
               child: PinnedRemindersList(pinnedNotes: pinnedNotes),
             ),
           ),
@@ -49,24 +50,5 @@ class RemindersPage extends StatelessWidget {
 }
 
 //----------------------------------
-class PinnedRemindersList extends StatelessWidget {
-  const PinnedRemindersList({super.key, required this.pinnedNotes});
-
-  final List<NoteModel> pinnedNotes;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return ReminderNoteItem(note: pinnedNotes[index]);
-      },
-      separatorBuilder: (context, index) {
-        return const SizedBox(width: 8);
-      },
-      itemCount: pinnedNotes.length,
-    );
-  }
-}
 
 ///////////////////////////

@@ -17,3 +17,4 @@ class NoteSearchSuccess extends NotesState {
 class NoteSearchEmptyData extends NotesState {}
 
 class NoteDeleteSearch extends NotesState {}
+class NoteChangePinned extends NotesState {}

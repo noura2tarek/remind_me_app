@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder_app/models/note_model.dart';
 import 'package:reminder_app/utils/constants.dart';
 import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/widgets/note_item.dart';
+import 'package:reminder_app/views/widgets/reminder_note_item.dart';
 import 'package:reminder_app/views/widgets/reminders_text.dart';
 import 'package:reminder_app/views/widgets/search_text_field.dart';
 

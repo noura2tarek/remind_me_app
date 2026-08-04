@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/views/widgets/note_item.dart';
+import 'package:reminder_app/views/widgets/reminder_note_item.dart';
 
 class UpcomingRemindersList extends StatelessWidget {
   const UpcomingRemindersList({super.key, required this.notes});
