@@ -205,12 +205,9 @@ lib
 │
 ├── utils
 │
-├── view_models
-│   ├── cubits
-│   └── states
-│
 ├── views
-│   ├── screens
+│   ├── cubits
+│   ├── pages
 │   └── widgets
 │
 └── main.dart
