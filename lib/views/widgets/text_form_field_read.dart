@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/utils/constants.dart';
+import 'package:remind_me/utils/constants.dart';
 
 class TextFormFieldRead extends StatelessWidget {
   const TextFormFieldRead({

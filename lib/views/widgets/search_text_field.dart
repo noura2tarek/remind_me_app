@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
 
 class SearchTextField extends StatefulWidget {
   const SearchTextField({super.key, this.height});

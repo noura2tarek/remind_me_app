@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/utils/functions.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/utils/functions.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
 
 // -------- Base Note Item ---------//
 
@@ -30,7 +30,6 @@ class NoteItem extends StatelessWidget {
         constraints: !inGrid ? const BoxConstraints(minHeight: 129) : null,
         padding: EdgeInsets.all(fromSearch ? 10 : 11),
         width: !inGrid ? MediaQuery.of(context).size.width * 0.50 : null,
-
         decoration: BoxDecoration(
           color: Color(note.color ?? 0xff000000),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -111,9 +110,7 @@ class NoteItem extends StatelessWidget {
             ],
             // Date
             Container(
-              padding: !inGrid
-                  ? const EdgeInsets.symmetric(horizontal: 8, vertical: 2)
-                  : const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding:  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Color(note.colorBorderDate ?? 0xffffffff),
@@ -122,7 +119,9 @@ class NoteItem extends StatelessWidget {
               ),
               child: Text(
                 formatReminder(note.date),
-                style: const TextStyle(color: Colors.black54, fontSize: 15),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.black54, fontSize: 14),
               ),
             ),
           ],

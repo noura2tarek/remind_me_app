@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
-import 'package:reminder_app/views/cubits/edit_note/edit_note_cubit.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:remind_me/views/cubits/edit_note/edit_note_cubit.dart';
 
 class ColorsListView extends StatefulWidget {
   const ColorsListView({super.key, this.fromEdit = false});

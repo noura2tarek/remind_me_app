@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/utils/functions.dart';
-import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/widgets/colors_list_view.dart';
-import 'package:reminder_app/views/widgets/custom_alert_dialog.dart';
-import 'package:reminder_app/views/widgets/custom_text_field.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/utils/functions.dart';
+import 'package:remind_me/views/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/widgets/colors_list_view.dart';
+import 'package:remind_me/views/widgets/custom_alert_dialog.dart';
+import 'package:remind_me/views/widgets/custom_text_field.dart';
+
 
 class AddNewReminderPage extends StatefulWidget {
   const AddNewReminderPage({super.key});

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/notifications_service.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/utils/print_state.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/services/notifications_service.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/utils/print_state.dart';
 part 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {
@@ -24,35 +24,25 @@ class NotesCubit extends Cubit<NotesState> {
   Future<void> fetchNotes() async {
     // get upcoming reminders first
     printLog('Pending remindeers..------------.');
-    final pendingReminders = await NotificationsService()
-        .getPendingNotifications();
-    final pendingIds = pendingReminders.map((e) => e.id).toSet();
+    // final pendingReminders = await NotificationsService()
+    //     .getPendingNotifications();
+    // final pendingIds = pendingReminders.map((e) => e.id).toSet();
 
-    for (final item in pendingReminders) {
-      printLog('pending  reminder ID: ${item.id}, Title: ${item.title}');
-    }
-    printLog('End of Pending reminders..-----------.');
+    // for (final item in pendingReminders) {
+    //   printLog('pending  reminder ID: ${item.id}, Title: ${item.title}');
+    // }
+    // printLog('End of Pending reminders..-----------.');
 
     var box = Hive.box<NoteModel>(kRemindersBox);
 
     // Get all notes (reminders with colors and other parameters)
     notes = box.values.toList();
-    printLog('All Notes...-------------------------');
-    for (final item in notes) {
-      printLog(
-        ' original note ID: ${item.id}, Title: ${item.title} pinned ${item.isPinned}',
-      );
-    }
-    printLog('End of All Notes..-------------------.');
-
-    // for (final note in notes.where((n) => !pendingIds.contains(n.id))) {
-    //   await note.delete();
-    // }
-    // printLog('Notes...-------------------------');
+    // printLog('All Notes...-------------------------');
     // for (final item in notes) {
-    //   printLog(' note ID: ${item.id}, Title: ${item.title}');
+    //   printLog(
+    //     ' original note ID: ${item.id}, Title: ${item.title} pinned ${item.isPinned}',
+    //   );
     // }
-    // printLog('End of Notes..-------------------.');
 
     pinnedNotes = notes.where((note) => note.isPinned == true).toList();
     upcomingNotes = notes.where((note) => note.isPinned == false).toList();
@@ -68,7 +58,7 @@ class NotesCubit extends Cubit<NotesState> {
 
   void searchNotes(String query) {
     notesSearchList = notes
-        .where((note) => note.title.contains(query))
+        .where((note) => note.title.toLowerCase().contains(query.toLowerCase()))
         .toList();
     List<NoteModel> result = [];
 

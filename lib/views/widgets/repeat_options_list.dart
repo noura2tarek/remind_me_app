@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/widgets/repaet_container.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/widgets/repeat_container.dart';
 
 class RepeatOptionsList extends StatefulWidget {
   const RepeatOptionsList({super.key});

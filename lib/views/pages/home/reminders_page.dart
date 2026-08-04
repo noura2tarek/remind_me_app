@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/widgets/reminder_note_item.dart';
-import 'package:reminder_app/views/widgets/pinned_reminders_list.dart';
-import 'package:reminder_app/views/widgets/upcoming_reminders_list.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/widgets/pinned_reminders_list.dart';
+import 'package:remind_me/views/widgets/upcoming_reminders_list.dart';
 
 class RemindersPage extends StatelessWidget {
   const RemindersPage({super.key, required this.upcomingNotes});

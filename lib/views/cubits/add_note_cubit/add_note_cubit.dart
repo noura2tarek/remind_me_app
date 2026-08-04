@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:meta/meta.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/notifications_service.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/utils/print_state.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/services/notifications_service.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/utils/print_state.dart';
 
 part 'add_note_state.dart';
 
@@ -130,14 +130,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     }
   }
 
-  // Delete reminder
-  // Future<void> deleteReminder() async {
-  //   await NotificationsService().cancelNotification(id);
-  //   debugPrint('reminder deleted');
-  //   hasReminder = false;
-  //   emit(ReminderDeleted());
-  // }
-
   bool hasReminder = false;
 
   //------ Save note reminder in hive local database
@@ -152,7 +144,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       content: content,
       date: date,
       isPinned: isPinned,
-      repeatOption: repeatOption ?? "",
+      repeatOption: repeatOption ?? repeatOptions.first,
       color: noteColor.toARGB32(),
       colorBorderDate: noteBorderDateColor.toARGB32(),
     );

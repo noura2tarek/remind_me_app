@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/navigation_service.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/cubits/edit_note/edit_note_cubit.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/pages/edit_reminder_page.dart';
-import 'package:reminder_app/views/widgets/note_item.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/services/navigation_service.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/cubits/edit_note/edit_note_cubit.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/pages/edit_reminder_page.dart';
+import 'package:remind_me/views/widgets/note_item.dart';
 
 // Reminder note item pinned
 class ReminderNoteItem extends StatelessWidget {

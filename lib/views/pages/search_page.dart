@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/widgets/reminder_note_item.dart';
-import 'package:reminder_app/views/widgets/reminders_text.dart';
-import 'package:reminder_app/views/widgets/search_text_field.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/widgets/reminder_note_item.dart';
+import 'package:remind_me/views/widgets/reminders_text.dart';
+import 'package:remind_me/views/widgets/search_text_field.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});

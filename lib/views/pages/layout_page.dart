@@ -2,12 +2,12 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/cubits/add_note_cubit/add_note_cubit.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/pages/add_new_reminder_page.dart';
-import 'package:reminder_app/views/pages/home/home_page.dart';
-import 'package:reminder_app/views/pages/search_page.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/cubits/add_note_cubit/add_note_cubit.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/pages/add_new_reminder_page.dart';
+import 'package:remind_me/views/pages/home/home_page.dart';
+import 'package:remind_me/views/pages/search_page.dart';
 
 class LayoutPage extends StatefulWidget {
   const LayoutPage({super.key});
@@ -95,7 +95,8 @@ class _LayoutPageState extends State<LayoutPage> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Are you sure you want to exit?'),
+        content: const Text('Are you sure you want to exit?'),
+        title: const Text('Exit App'),
         actions: [
           TextButton(
             child: const Text('No'),

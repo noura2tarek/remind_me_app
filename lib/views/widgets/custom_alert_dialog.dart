@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:reminder_app/utils/constants.dart';
-import 'package:reminder_app/views/widgets/text_form_field_read.dart';
+import 'package:remind_me/utils/constants.dart';
+import 'package:remind_me/views/widgets/text_form_field_read.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   const CustomAlertDialog({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/utils/app_assets.dart';
-import 'package:reminder_app/utils/constants.dart';
+import 'package:remind_me/utils/app_assets.dart';
+import 'package:remind_me/utils/constants.dart';
 
 // No reminders page and add new reminder
 class NoRemindersPage extends StatelessWidget {
@@ -8,23 +8,12 @@ class NoRemindersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //backgroundColor: Colors.white,
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: () {
-    //     // Navigate to add new reminder page
-    //     Navigator.of(context).push(
-    //       MaterialPageRoute(builder: (context) => const AddNewReminderPage()),
-    //     );
-    //   },
-    //   backgroundColor: Theme.of(context).colorScheme.primary,
-    //   child: const Icon(Icons.add, color: Colors.white),
-    // ),
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Add your title and description of your reminder
         Image.asset(Assets.imageOfNoReminders),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         // no reminders text
         Center(
           child: Text(
@@ -37,8 +26,8 @@ class NoRemindersPage extends StatelessWidget {
           ),
         ),
         // body
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
             'You have no reminders yet. Tap the button below to add a new reminder.',
             style: TextStyle(fontSize: 16, color: Colors.black45),

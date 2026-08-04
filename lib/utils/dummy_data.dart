@@ -1,4 +1,4 @@
-import 'package:reminder_app/models/note_model.dart';
+import 'package:remind_me/models/note_model.dart';
 
 List<NoteModel> dummyUpcoimgNotes = [
   NoteModel(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/views/cubits/notes_cubit/notes_cubit.dart';
-import 'package:reminder_app/views/pages/home/no_reminders_page.dart';
-import 'package:reminder_app/views/pages/home/reminders_page.dart';
-import 'package:reminder_app/views/widgets/reminders_text.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/views/cubits/notes_cubit/notes_cubit.dart';
+import 'package:remind_me/views/pages/home/no_reminders_page.dart';
+import 'package:remind_me/views/pages/home/reminders_page.dart';
+import 'package:remind_me/views/widgets/reminders_text.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

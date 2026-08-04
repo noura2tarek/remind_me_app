@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/services/notifications_service.dart';
-import 'package:reminder_app/utils/constants.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/services/notifications_service.dart';
+import 'package:remind_me/utils/constants.dart';
 part 'edit_note_state.dart';
 
 class EditNoteCubit extends Cubit<EditNoteState> {

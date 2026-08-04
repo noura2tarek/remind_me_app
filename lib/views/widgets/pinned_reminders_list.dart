@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/models/note_model.dart';
-import 'package:reminder_app/views/widgets/reminder_note_item.dart';
+import 'package:remind_me/models/note_model.dart';
+import 'package:remind_me/views/widgets/reminder_note_item.dart';
 
 class PinnedRemindersList extends StatelessWidget {
   const PinnedRemindersList({super.key, required this.pinnedNotes});
